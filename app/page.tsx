@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react"
 import MealDialog from "@/components/meal-dialog"
+import CopyDayDialog from "@/components/copy-day-dialog"
 import type { MealEntry, DayOfWeek, MealType } from "@/types"
 
 const DAYS: { key: DayOfWeek; label: string }[] = [
@@ -24,6 +25,7 @@ const MEALS: { key: MealType; label: string }[] = [
 export default function WeekPage() {
   const [entries, setEntries] = useState<MealEntry[]>([])
   const [selected, setSelected] = useState<{ day: DayOfWeek; meal: MealType } | null>(null)
+  const [copyFrom, setCopyFrom] = useState<DayOfWeek | null>(null)
 
   const load = useCallback(async () => {
     const res = await fetch("/api/meals")
@@ -56,7 +58,16 @@ export default function WeekPage() {
               <th className="w-32 text-left text-zinc-500 font-medium pb-3 pr-3"></th>
               {DAYS.map((d) => (
                 <th key={d.key} className="text-center text-zinc-400 font-medium pb-3 px-1">
-                  {d.label}
+                  <div className="flex flex-col items-center gap-1">
+                    <span>{d.label}</span>
+                    <button
+                      onClick={() => setCopyFrom(d.key)}
+                      className="text-zinc-700 hover:text-zinc-400 text-xs transition-colors"
+                      title={`Copier ${d.label}`}
+                    >
+                      ⎘
+                    </button>
+                  </div>
                 </th>
               ))}
             </tr>
@@ -109,6 +120,15 @@ export default function WeekPage() {
           entries={cellEntries(selected.day, selected.meal)}
           open={true}
           onClose={() => setSelected(null)}
+          onRefresh={load}
+        />
+      )}
+
+      {copyFrom && (
+        <CopyDayDialog
+          fromDay={copyFrom}
+          open={true}
+          onClose={() => setCopyFrom(null)}
           onRefresh={load}
         />
       )}
