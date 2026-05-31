@@ -33,6 +33,7 @@ export async function searchFoods(query: string, pageSize = 25): Promise<UsdaSea
     api_key: USDA_API_KEY,
   })
   const res = await fetch(`${BASE}/foods/search?${params}`, { next: { revalidate: 86400 } })
+  if (res.status === 429) throw new Error("RATE_LIMIT")
   if (!res.ok) throw new Error(`USDA search failed: ${res.status}`)
   const data = await res.json()
 

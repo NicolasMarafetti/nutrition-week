@@ -7,8 +7,16 @@ export async function GET(req: NextRequest) {
   const query = req.nextUrl.searchParams.get("q")
   if (!query) return Response.json({ error: "q is required" }, { status: 400 })
 
-  const results = await searchFoods(query)
-  return Response.json(results)
+  try {
+    const results = await searchFoods(query)
+    return Response.json(results)
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "unknown"
+    if (msg === "RATE_LIMIT") {
+      return Response.json({ error: "RATE_LIMIT" }, { status: 429 })
+    }
+    return Response.json({ error: "USDA_ERROR" }, { status: 502 })
+  }
 }
 
 // Fetch full detail for a food and cache it in DB

@@ -37,6 +37,7 @@ export default function MealDialog({ day, meal, entries, open, onClose, onRefres
   const [customGrams, setCustomGrams] = useState<Record<number, string>>({})
   const [customFoods, setCustomFoods] = useState<Array<{ id: number; name: string; nutrients: Record<string, number> }>>([])
   const [incompleteWarning, setIncompleteWarning] = useState<string | null>(null)
+  const [searchError, setSearchError] = useState<string | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
@@ -44,13 +45,22 @@ export default function MealDialog({ day, meal, entries, open, onClose, onRefres
   }, [])
 
   useEffect(() => {
-    if (!query.trim()) { setResults([]); return }
+    if (!query.trim()) { setResults([]); setSearchError(null); return }
     if (debounceRef.current) clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(async () => {
       setSearching(true)
+      setSearchError(null)
       const res = await fetch(`/api/foods/search?q=${encodeURIComponent(query)}`)
-      const data = await res.json()
-      setResults(data)
+      if (res.status === 429) {
+        setSearchError("Limite de l'API USDA atteinte (30 req/heure avec la clé gratuite). Ajoute ta clé personnelle dans .env ou réessaie dans quelques minutes.")
+        setResults([])
+      } else if (!res.ok) {
+        setSearchError("Erreur de connexion à l'API USDA. Réessaie dans quelques instants.")
+        setResults([])
+      } else {
+        const data = await res.json()
+        setResults(data)
+      }
       setSearching(false)
     }, 400)
   }, [query])
@@ -153,7 +163,7 @@ export default function MealDialog({ day, meal, entries, open, onClose, onRefres
                 type="number"
                 defaultValue={e.grams}
                 onBlur={(ev) => updateGrams(e.id, Number(ev.target.value))}
-                className="w-20 bg-zinc-800 border-zinc-700 text-xs"
+                className="w-20 bg-zinc-800 border-zinc-700 text-zinc-100 text-xs"
               />
               <span className="text-zinc-500 text-xs">g</span>
               <button
@@ -170,9 +180,9 @@ export default function MealDialog({ day, meal, entries, open, onClose, onRefres
 
         <Tabs defaultValue="usda">
           <TabsList className="bg-zinc-800 w-full">
-            <TabsTrigger value="usda" className="flex-1 text-xs">Recherche USDA</TabsTrigger>
-            <TabsTrigger value="custom-list" className="flex-1 text-xs">Mes aliments</TabsTrigger>
-            <TabsTrigger value="custom-create" className="flex-1 text-xs">+ Créer</TabsTrigger>
+            <TabsTrigger value="usda" className="flex-1 text-xs text-zinc-400 data-[state=active]:text-zinc-100 data-[state=active]:bg-zinc-700">Recherche USDA</TabsTrigger>
+            <TabsTrigger value="custom-list" className="flex-1 text-xs text-zinc-400 data-[state=active]:text-zinc-100 data-[state=active]:bg-zinc-700">Mes aliments</TabsTrigger>
+            <TabsTrigger value="custom-create" className="flex-1 text-xs text-zinc-400 data-[state=active]:text-zinc-100 data-[state=active]:bg-zinc-700">+ Créer</TabsTrigger>
           </TabsList>
 
           {/* Onglet USDA */}
@@ -181,11 +191,16 @@ export default function MealDialog({ day, meal, entries, open, onClose, onRefres
               placeholder="Rechercher (en anglais)…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="bg-zinc-800 border-zinc-700"
+              className="bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500"
             />
             {searching && (
               <div className="space-y-2">
                 {[1, 2, 3].map((i) => <Skeleton key={i} className="h-8 bg-zinc-800" />)}
+              </div>
+            )}
+            {searchError && (
+              <div className="bg-red-950 border border-red-800 rounded-lg px-3 py-2.5 text-red-300 text-xs">
+                {searchError}
               </div>
             )}
             <div className="space-y-1.5 max-h-52 overflow-y-auto">
@@ -210,7 +225,7 @@ export default function MealDialog({ day, meal, entries, open, onClose, onRefres
                     placeholder="100"
                     value={gramsMap[r.fdcId] ?? ""}
                     onChange={(e) => setGramsMap((m) => ({ ...m, [r.fdcId]: e.target.value }))}
-                    className="w-20 bg-zinc-800 border-zinc-700 text-xs"
+                    className="w-20 bg-zinc-800 border-zinc-700 text-zinc-100 text-xs"
                   />
                   <span className="text-zinc-500 text-xs">g</span>
                   <Button
@@ -240,7 +255,7 @@ export default function MealDialog({ day, meal, entries, open, onClose, onRefres
                       placeholder="100"
                       value={customGrams[f.id] ?? ""}
                       onChange={(e) => setCustomGrams((m) => ({ ...m, [f.id]: e.target.value }))}
-                      className="w-20 bg-zinc-800 border-zinc-700 text-xs"
+                      className="w-20 bg-zinc-800 border-zinc-700 text-zinc-100 text-xs"
                     />
                     <span className="text-zinc-500 text-xs">g</span>
                     <Button
