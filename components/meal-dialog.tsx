@@ -36,6 +36,7 @@ export default function MealDialog({ day, meal, entries, open, onClose, onRefres
   const [gramsMap, setGramsMap] = useState<Record<number, string>>({})
   const [customGrams, setCustomGrams] = useState<Record<number, string>>({})
   const [customFoods, setCustomFoods] = useState<Array<{ id: number; name: string; nutrients: Record<string, number> }>>([])
+  const [incompleteWarning, setIncompleteWarning] = useState<string | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
@@ -58,11 +59,15 @@ export default function MealDialog({ day, meal, entries, open, onClose, onRefres
     const grams = Number(gramsMap[fdcId] ?? 100)
     if (!grams || grams <= 0) return
     setAdding(fdcId)
-    await fetch("/api/foods/search", {
+    const cacheRes = await fetch("/api/foods/search", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ fdcId }),
     })
+    const cacheData = await cacheRes.json()
+    if (cacheData.incomplete) {
+      setIncompleteWarning(`⚠️ "${cacheData.name}" n'a pas de données de calories/protéines dans la base USDA. Cet aliment ne contribuera pas au bilan. Choisis une autre entrée.`)
+    }
     await fetch("/api/meals", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -110,12 +115,21 @@ export default function MealDialog({ day, meal, entries, open, onClose, onRefres
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="bg-zinc-900 border-zinc-700 max-w-xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-zinc-900 border-zinc-700 max-w-3xl sm:max-w-3xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
         <DialogHeader>
           <DialogTitle className="text-zinc-100">
             {MEAL_LABELS[meal]} — {day}
           </DialogTitle>
         </DialogHeader>
+
+        {/* Avertissement aliment incomplet */}
+        {incompleteWarning && (
+          <div className="bg-amber-950 border border-amber-700 rounded-lg px-3 py-2 text-amber-300 text-xs flex gap-2">
+            <span className="shrink-0">⚠️</span>
+            <span>{incompleteWarning.replace("⚠️ ", "")}</span>
+            <button onClick={() => setIncompleteWarning(null)} className="ml-auto shrink-0 text-amber-500 hover:text-amber-300">✕</button>
+          </div>
+        )}
 
         {/* Aliments du repas */}
         <div className="space-y-2">

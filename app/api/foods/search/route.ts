@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
   if (!fdcId) return Response.json({ error: "fdcId required" }, { status: 400 })
 
   const existing = await prisma.food.findUnique({ where: { fdcId } })
-  if (existing) return Response.json(existing)
+  if (existing) return Response.json({ ...existing, incomplete: isIncomplete(existing.nutrients as Record<string, number>) })
 
   const detail = await getFoodDetail(fdcId)
   const rawNutrients = normalizeFoodNutrients(detail)
@@ -31,5 +31,9 @@ export async function POST(req: NextRequest) {
       nutrients,
     },
   })
-  return Response.json(food)
+  return Response.json({ ...food, incomplete: isIncomplete(nutrients) })
+}
+
+function isIncomplete(nutrients: Record<string, number>): boolean {
+  return !nutrients.calories && !nutrients.protein
 }
