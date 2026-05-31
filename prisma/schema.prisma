@@ -48,6 +48,12 @@ model MealEntry {
   @@unique([day, meal, customFoodId])
 }
 
+model IgnoredFood {
+  fdcId     Int      @id
+  name      String
+  ignoredAt DateTime @default(now())
+}
+
 enum Sex {
   MALE
   FEMALE

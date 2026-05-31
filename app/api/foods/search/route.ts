@@ -8,40 +8,62 @@ export async function GET(req: NextRequest) {
   if (!query) return Response.json({ error: "q is required" }, { status: 400 })
 
   try {
-    const results = await searchFoods(query)
-    return Response.json(results)
+    const [results, ignoredList] = await Promise.all([
+      searchFoods(query),
+      prisma.ignoredFood.findMany({ select: { fdcId: true } }),
+    ])
+    const ignoredIds = new Set(ignoredList.map((f) => f.fdcId))
+    const filtered = results.filter((r) => !ignoredIds.has(r.fdcId))
+    return Response.json(filtered)
   } catch (err) {
     const msg = err instanceof Error ? err.message : "unknown"
-    if (msg === "RATE_LIMIT") {
-      return Response.json({ error: "RATE_LIMIT" }, { status: 429 })
-    }
+    if (msg === "RATE_LIMIT") return Response.json({ error: "RATE_LIMIT" }, { status: 429 })
     return Response.json({ error: "USDA_ERROR" }, { status: 502 })
   }
 }
 
-// Fetch full detail for a food and cache it in DB
+// Fetch full detail for a food, cache it, or add to ignored list if incomplete
 export async function POST(req: NextRequest) {
   const { fdcId } = await req.json()
   if (!fdcId) return Response.json({ error: "fdcId required" }, { status: 400 })
 
+  // Already ignored
+  const alreadyIgnored = await prisma.ignoredFood.findUnique({ where: { fdcId } })
+  if (alreadyIgnored) return Response.json({ error: "IGNORED" }, { status: 422 })
+
+  // Already cached and complete
   const existing = await prisma.food.findUnique({ where: { fdcId } })
-  if (existing) return Response.json({ ...existing, incomplete: isIncomplete(existing.nutrients as Record<string, number>) })
+  if (existing) {
+    if (isIncomplete(existing.nutrients as Record<string, number>)) {
+      await ignoreFood(fdcId, existing.name)
+      return Response.json({ error: "IGNORED" }, { status: 422 })
+    }
+    return Response.json(existing)
+  }
 
   const detail = await getFoodDetail(fdcId)
   const rawNutrients = normalizeFoodNutrients(detail)
   const nutrients = extractNutrients(rawNutrients)
 
+  if (isIncomplete(nutrients)) {
+    await ignoreFood(fdcId, detail.description)
+    return Response.json({ error: "IGNORED" }, { status: 422 })
+  }
+
   const food = await prisma.food.create({
-    data: {
-      fdcId: detail.fdcId,
-      name: detail.description,
-      dataType: detail.dataType,
-      nutrients,
-    },
+    data: { fdcId: detail.fdcId, name: detail.description, dataType: detail.dataType, nutrients },
   })
-  return Response.json({ ...food, incomplete: isIncomplete(nutrients) })
+  return Response.json(food)
 }
 
 function isIncomplete(nutrients: Record<string, number>): boolean {
   return !nutrients.calories && !nutrients.protein
+}
+
+async function ignoreFood(fdcId: number, name: string) {
+  await prisma.ignoredFood.upsert({
+    where: { fdcId },
+    update: {},
+    create: { fdcId, name },
+  })
 }

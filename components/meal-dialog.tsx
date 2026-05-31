@@ -36,7 +36,6 @@ export default function MealDialog({ day, meal, entries, open, onClose, onRefres
   const [gramsMap, setGramsMap] = useState<Record<number, string>>({})
   const [customGrams, setCustomGrams] = useState<Record<number, string>>({})
   const [customFoods, setCustomFoods] = useState<Array<{ id: number; name: string; nutrients: Record<string, number> }>>([])
-  const [incompleteWarning, setIncompleteWarning] = useState<string | null>(null)
   const [searchError, setSearchError] = useState<string | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -74,10 +73,14 @@ export default function MealDialog({ day, meal, entries, open, onClose, onRefres
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ fdcId }),
     })
-    const cacheData = await cacheRes.json()
-    if (cacheData.incomplete) {
-      setIncompleteWarning(`⚠️ "${cacheData.name}" n'a pas de données de calories/protéines dans la base USDA. Cet aliment ne contribuera pas au bilan. Choisis une autre entrée.`)
+
+    if (cacheRes.status === 422) {
+      // Incomplet — ignoré automatiquement, on retire des résultats
+      setResults((prev) => prev.filter((r) => r.fdcId !== fdcId))
+      setAdding(null)
+      return
     }
+
     await fetch("/api/meals", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -131,15 +134,6 @@ export default function MealDialog({ day, meal, entries, open, onClose, onRefres
             {MEAL_LABELS[meal]} — {day}
           </DialogTitle>
         </DialogHeader>
-
-        {/* Avertissement aliment incomplet */}
-        {incompleteWarning && (
-          <div className="bg-amber-950 border border-amber-700 rounded-lg px-3 py-2 text-amber-300 text-xs flex gap-2">
-            <span className="shrink-0">⚠️</span>
-            <span>{incompleteWarning.replace("⚠️ ", "")}</span>
-            <button onClick={() => setIncompleteWarning(null)} className="ml-auto shrink-0 text-amber-500 hover:text-amber-300">✕</button>
-          </div>
-        )}
 
         {/* Aliments du repas */}
         <div className="space-y-2">
