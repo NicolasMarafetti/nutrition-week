@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Profile {
+  id             Int      @id @default(1)
+  age            Int
+  weightKg       Float
+  targetWeightKg Float
+  heightCm       Int
+  sex            Sex
+  updatedAt      DateTime @updatedAt
+}
+
+model Food {
+  fdcId       Int         @id
+  name        String
+  dataType    String
+  nutrients   Json
+  cachedAt    DateTime    @default(now())
+  mealEntries MealEntry[]
+}
+
+model CustomFood {
+  id          Int         @id @default(autoincrement())
+  name        String
+  nutrients   Json
+  createdAt   DateTime    @default(now())
+  mealEntries MealEntry[]
+}
+
+model MealEntry {
+  id           Int         @id @default(autoincrement())
+  day          DayOfWeek
+  meal         MealType
+  grams        Float
+  foodId       Int?
+  customFoodId Int?
+  food         Food?       @relation(fields: [foodId], references: [fdcId])
+  customFood   CustomFood? @relation(fields: [customFoodId], references: [id])
+
+  @@unique([day, meal, foodId])
+  @@unique([day, meal, customFoodId])
+}
+
+enum Sex {
+  MALE
+  FEMALE
+}
+
+enum DayOfWeek {
+  MON
+  TUE
+  WED
+  THU
+  FRI
+  SAT
+  SUN
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  SNACK
+  DINNER
+}
