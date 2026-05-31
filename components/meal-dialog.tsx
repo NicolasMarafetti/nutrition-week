@@ -179,8 +179,16 @@ export default function MealDialog({ day, meal, entries, open, onClose, onRefres
                 <div key={r.fdcId} className="flex items-center gap-2 text-sm">
                   <div className="flex-1 min-w-0">
                     <span className="text-zinc-200 truncate block">{r.description}</span>
-                    <Badge variant="outline" className="text-xs border-zinc-700 text-zinc-500">
-                      {r.dataType}
+                    <Badge
+                      variant="outline"
+                      className={[
+                        "text-xs",
+                        r.dataType === "Foundation" || r.dataType === "SR Legacy"
+                          ? "border-emerald-700 text-emerald-500"
+                          : "border-zinc-700 text-zinc-500",
+                      ].join(" ")}
+                    >
+                      {r.dataType === "SR Legacy" ? "SR Legacy ★" : r.dataType}
                     </Badge>
                   </div>
                   <Input

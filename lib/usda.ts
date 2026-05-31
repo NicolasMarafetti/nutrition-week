@@ -18,7 +18,14 @@ export interface UsdaFoodDetail {
   }>
 }
 
-export async function searchFoods(query: string, pageSize = 20): Promise<UsdaSearchResult[]> {
+const DATA_TYPE_PRIORITY: Record<string, number> = {
+  "Foundation": 0,
+  "SR Legacy": 1,
+  "Survey (FNDDS)": 2,
+  "Branded": 3,
+}
+
+export async function searchFoods(query: string, pageSize = 25): Promise<UsdaSearchResult[]> {
   const params = new URLSearchParams({
     query,
     dataType: "Foundation,SR Legacy,Branded",
@@ -28,12 +35,24 @@ export async function searchFoods(query: string, pageSize = 20): Promise<UsdaSea
   const res = await fetch(`${BASE}/foods/search?${params}`, { next: { revalidate: 86400 } })
   if (!res.ok) throw new Error(`USDA search failed: ${res.status}`)
   const data = await res.json()
-  return (data.foods ?? []).map((f: Record<string, unknown>) => ({
-    fdcId: f.fdcId as number,
-    description: f.description as string,
-    dataType: f.dataType as string,
-    brandOwner: f.brandOwner as string | undefined,
-  }))
+
+  const results: UsdaSearchResult[] = (data.foods ?? []).map((f: Record<string, unknown>) => {
+    const dataType = f.dataType as string
+    const brandOwner = f.brandOwner as string | undefined
+    // Build a readable display name: append brand for Branded items
+    const description = f.description as string
+    const displayName = dataType === "Branded" && brandOwner
+      ? `${description} — ${brandOwner}`
+      : description
+    return { fdcId: f.fdcId as number, description: displayName, dataType, brandOwner }
+  })
+
+  // Sort: Foundation and SR Legacy first, Branded last
+  return results.sort((a, b) => {
+    const pa = DATA_TYPE_PRIORITY[a.dataType] ?? 9
+    const pb = DATA_TYPE_PRIORITY[b.dataType] ?? 9
+    return pa - pb
+  })
 }
 
 export async function getFoodDetail(fdcId: number): Promise<UsdaFoodDetail> {
