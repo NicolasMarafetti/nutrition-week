@@ -25,7 +25,12 @@ export function computeTargets(
   profile: Profile
 ): NutrientTarget[] {
   return NUTRIENTS.map((def) => {
-    const target = def.rdaFn({ age: profile.age, weightKg: profile.weightKg, sex: profile.sex })
+    const target = def.rdaFn({
+      age: profile.age,
+      weightKg: profile.weightKg,
+      heightCm: profile.heightCm,
+      sex: profile.sex,
+    })
     const actual = (weekNutrients[def.key] ?? 0) / 7
     const pct = target > 0 ? Math.min((actual / target) * 100, 999) : 0
     const deficit = Math.max(target - actual, 0)

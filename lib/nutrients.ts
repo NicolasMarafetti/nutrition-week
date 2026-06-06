@@ -6,6 +6,33 @@ export type NutrientGroup =
   | "energy"
   | "general"
 
+export interface BodyProfile {
+  age: number
+  weightKg: number
+  heightCm: number
+  sex: "MALE" | "FEMALE"
+}
+
+// Hypothèses du profil : niveau d'activité "actif" + surplus prise de masse.
+export const ACTIVITY_FACTOR = 1.55
+export const MASS_GAIN_SURPLUS = 400
+
+/** Métabolisme de base — Mifflin-St Jeor. */
+export function bmr(p: BodyProfile): number {
+  const base = 10 * p.weightKg + 6.25 * p.heightCm - 5 * p.age
+  return p.sex === "MALE" ? base + 5 : base - 161
+}
+
+/** Dépense énergétique journalière (TDEE), niveau actif. */
+export function tdee(p: BodyProfile): number {
+  return Math.round(bmr(p) * ACTIVITY_FACTOR)
+}
+
+/** Cible calorique journalière = TDEE + surplus prise de masse. */
+export function calorieTarget(p: BodyProfile): number {
+  return tdee(p) + MASS_GAIN_SURPLUS
+}
+
 export interface NutrientDef {
   key: string
   label: string
@@ -15,7 +42,7 @@ export interface NutrientDef {
   // "sum" (default): additionne tous les IDs trouvés (ex: oméga-3 = ALA+EPA+DHA)
   // "first": prend le premier ID disponible dans l'ordre (ex: calories, plusieurs façons de reporter l'énergie)
   mode?: "sum" | "first"
-  rdaFn: (profile: { age: number; weightKg: number; sex: "MALE" | "FEMALE" }) => number
+  rdaFn: (profile: BodyProfile) => number
   priority: number
 }
 
@@ -30,7 +57,7 @@ export const NUTRIENTS: NutrientDef[] = [
     // 1008 = Energy (kcal), 2047/2048 = Energy via Atwater factors (Foundation foods)
     usdaIds: [1008, 2047, 2048],
     mode: "first",
-    rdaFn: ({ weightKg }) => Math.round((10 * weightKg + 625 + 5) * 1.55 + 400),
+    rdaFn: (p) => calorieTarget(p),
     priority: 1,
   },
   {
@@ -48,7 +75,8 @@ export const NUTRIENTS: NutrientDef[] = [
     unit: "g",
     group: "macros",
     usdaIds: [1005],
-    rdaFn: ({ weightKg }) => Math.round((((10 * weightKg + 625 + 5) * 1.55 + 400) * 0.45) / 4),
+    // ~45% des calories, à 4 kcal/g
+    rdaFn: (p) => Math.round((calorieTarget(p) * 0.45) / 4),
     priority: 3,
   },
   {

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { waterRecommendationMl } from "@/lib/nutrients"
+import { waterRecommendationMl, tdee, calorieTarget } from "@/lib/nutrients"
 
 interface ProfileData {
   age: number
@@ -12,13 +12,6 @@ interface ProfileData {
   targetWeightKg: number
   heightCm: number
   sex: "MALE" | "FEMALE"
-}
-
-function calcTDEE(p: ProfileData) {
-  const bmr = p.sex === "MALE"
-    ? 10 * p.weightKg + 6.25 * p.heightCm - 5 * p.age + 5
-    : 10 * p.weightKg + 6.25 * p.heightCm - 5 * p.age - 161
-  return Math.round(bmr * 1.55)
 }
 
 export default function ProfilPage() {
@@ -72,9 +65,9 @@ export default function ProfilPage() {
 
   if (loading) return <p className="text-zinc-500">Chargement…</p>
 
-  const tdee = calcTDEE(form)
+  const tdeeValue = tdee(form)
   const protein = Math.round(form.weightKg * 2.2)
-  const calories = tdee + 400
+  const calories = calorieTarget(form)
   const water = waterRecommendationMl(form.weightKg)
 
   return (
@@ -108,7 +101,7 @@ export default function ProfilPage() {
           Objectifs calculés (prise de masse)
         </h2>
         <div className="grid grid-cols-2 gap-3 text-sm">
-          <Stat label="Calories / jour" value={`${calories} kcal`} note={`TDEE ${tdee} + 400`} />
+          <Stat label="Calories / jour" value={`${calories} kcal`} note={`TDEE ${tdeeValue} + 400`} />
           <Stat label="Protéines / jour" value={`${protein} g`} note="2.2g × poids" />
           <Stat label="Eau / jour" value={`${water} ml`} note="35ml × poids" />
           <Stat

@@ -10,13 +10,13 @@ Décision utilisateur : ne pas construire de logique dédiée (type `ceiling`/`r
 
 Note : un vrai système `target`/`ceiling`/`range` reste l'option propre si on veut un jour distinguer « atteindre » de « rester sous ». Pas demandé pour l'instant.
 
-## 2. Incohérence du calcul des calories
+## 2. Incohérence du calcul des calories — FAIT ✅
 
-**Problème** : la page Profil affiche ~2940 kcal (Mifflin-St Jeor complet avec taille/âge × 1.55 + 400), mais le Bilan vise ~2431 kcal (formule simplifiée dans `lib/nutrients.ts` : `(10*poids + 625 + 5) * 1.55 + 400`). Deux formules pour la même chose.
-
-**À faire** :
-- Source unique de vérité pour le TDEE/cible calorique (idéalement Mifflin-St Jeor complet, partagé entre Profil et Bilan).
-- Vérifier que les macros dérivées (glucides ~45% des calories) utilisent la même base.
+Fonctions partagées dans `lib/nutrients.ts` : `bmr()` (Mifflin-St Jeor complet), `tdee()` (× 1.55 actif), `calorieTarget()` (+ 400 prise de masse).
+- `rdaFn` reçoit désormais `heightCm` (signature `BodyProfile`).
+- Calories et glucides (45% des calories) dérivent de `calorieTarget()`.
+- La page Profil et le Bilan utilisent les mêmes fonctions → plus de divergence.
+- Résultat : cible calories unifiée à 2940 kcal (profil 68 kg / 179 cm / 33 ans / H), glucides 331 g.
 
 ## 3. Sécuriser l'écriture — PARTIELLEMENT FAIT / DÉCISION
 
