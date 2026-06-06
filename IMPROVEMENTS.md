@@ -2,16 +2,13 @@
 
 Suivi des points identifiés. Ordre = priorité décidée avec l'utilisateur.
 
-## 1. Sodium & graisses saturées : plafonds, pas cibles
+## 1. Sodium & graisses saturées : plafonds, pas cibles — DÉCIDÉ (pas de système spécifique)
 
-**Problème** : le bilan traite tous les nutriments comme « atteindre 100% ». Or :
-- **Sodium** = une **fourchette** : plancher ~1500 mg/jour, plafond ~2300 mg/jour. En-dessous du plancher = trop peu ; au-dessus du plafond = trop. (Athlète d'endurance : besoin potentiellement plus élevé.)
-- **Graisses saturées** = un **plafond** seul : rester sous ~20-25 g/jour (≈10% des calories). Plus bas = mieux. Pas de plancher.
+Décision utilisateur : ne pas construire de logique dédiée (type `ceiling`/`range`).
+- **Sodium** : cible simplement abaissée à **1500 mg/jour** (apport adéquat adulte). Le sel de cuisson, non tracké, complète. ✅ Fait.
+- **Graisses saturées** : laissé tel quel (cible ~20 g via `poids × 0.3`). Les aliments recommandés sont sains, donc non prioritaire. Différé.
 
-**À faire** :
-- Introduire une notion de type de nutriment : `target` (atteindre), `ceiling` (rester sous), `range` (entre plancher et plafond).
-- Affichage : « OK » quand dans la zone saine, alerte distincte si trop bas (range) ou si dépassement (ceiling). Ne plus afficher « Déficit » rouge pour un sodium bas.
-- Couleurs/labels adaptés par type.
+Note : un vrai système `target`/`ceiling`/`range` reste l'option propre si on veut un jour distinguer « atteindre » de « rester sous ». Pas demandé pour l'instant.
 
 ## 2. Incohérence du calcul des calories
 
@@ -29,7 +26,16 @@ Suivi des points identifiés. Ordre = priorité décidée avec l'utilisateur.
 - Protéger derrière un secret (header/clé via variable d'env) ou les désactiver en production.
 - Réflexion plus large : l'app n'a aucune auth, donc les routes d'écriture normales (ajout/suppression de repas) sont aussi ouvertes. Pour un usage perso en ligne, envisager un mot de passe simple à l'échelle du site.
 
-## 4. (Plus tard) Détails mineurs
+## 4. Backup régulier de la base de données (Neon)
+
+**Problème** : toutes les données repas vivent dans Neon. Une suppression (accident, route admin, visiteur) = perte sèche. Git ne sauvegarde que le code.
+
+**À faire** :
+- Mettre en place un export/backup régulier de la BDD Neon (les repas, le profil, les aliments custom).
+- Pistes : Neon a des branches/snapshots ; sinon un petit script `pg_dump` planifié, ou une route d'export JSON déclenchée périodiquement.
+- À articuler avec le point #3 (sécuriser l'écriture) : les deux protègent les données.
+
+## 5. (Plus tard) Détails mineurs
 
 - Qualité de traduction MyMemory parfois mauvaise (ex : noms USDA avec mentions de programme USDA).
 - Plusieurs RDA micronutriments sont des valeurs fixes, non ajustées à l'âge/sexe (la signature `rdaFn` le permet pourtant).

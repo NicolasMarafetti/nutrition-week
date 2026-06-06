@@ -274,7 +274,8 @@ export const NUTRIENTS: NutrientDef[] = [
     unit: "mg",
     group: "general",
     usdaIds: [1093],
-    rdaFn: () => 2300,
+    // Apport adéquat (~1500 mg). Le sel de cuisson ajouté n'est pas tracké.
+    rdaFn: () => 1500,
     priority: 27,
   },
   {
