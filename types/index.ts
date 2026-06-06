@@ -15,6 +15,7 @@ export interface MealEntry {
 export interface UsdaSearchResult {
   fdcId: number
   description: string
+  descriptionFr?: string
   dataType: string
   brandOwner?: string
 }

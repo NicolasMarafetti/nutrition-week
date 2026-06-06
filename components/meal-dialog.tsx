@@ -202,7 +202,10 @@ export default function MealDialog({ day, meal, entries, open, onClose, onRefres
               {results.map((r) => (
                 <div key={r.fdcId} className="flex items-center gap-2 text-sm">
                   <div className="flex-1 min-w-0">
-                    <span className="text-zinc-200 truncate block">{r.description}</span>
+                    <span className="text-zinc-200 truncate block">{r.descriptionFr ?? r.description}</span>
+                    {r.descriptionFr && r.descriptionFr !== r.description && (
+                      <span className="text-zinc-600 text-xs truncate block">{r.description}</span>
+                    )}
                     <Badge
                       variant="outline"
                       className={[

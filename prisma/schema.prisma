@@ -55,6 +55,12 @@ model IgnoredFood {
   ignoredAt DateTime @default(now())
 }
 
+model Translation {
+  source    String   @id
+  target    String
+  createdAt DateTime @default(now())
+}
+
 enum Sex {
   MALE
   FEMALE

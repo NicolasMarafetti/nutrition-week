@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { searchFoods, getFoodDetail, normalizeFoodNutrients } from "@/lib/usda"
 import { extractNutrients } from "@/lib/nutrients"
-import { translateToFrench, translateToEnglish } from "@/lib/translate"
+import { translateToFrench, translateToEnglish, translateManyToFrenchCached } from "@/lib/translate"
 import { NextRequest } from "next/server"
 
 export async function GET(req: NextRequest) {
@@ -16,7 +16,15 @@ export async function GET(req: NextRequest) {
     const results = await searchFoods(englishQuery)
     const ignoredIds = new Set(ignoredList.map((f) => f.fdcId))
     const filtered = results.filter((r) => !ignoredIds.has(r.fdcId))
-    return Response.json(filtered)
+
+    // Traduire les libellés (avec cache DB pour épargner le quota MyMemory)
+    const frMap = await translateManyToFrenchCached(filtered.map((r) => r.description))
+    const withFr = filtered.map((r) => ({
+      ...r,
+      descriptionFr: frMap.get(r.description) ?? r.description,
+    }))
+
+    return Response.json(withFr)
   } catch (err) {
     const msg = err instanceof Error ? err.message : "unknown"
     if (msg === "RATE_LIMIT") return Response.json({ error: "RATE_LIMIT" }, { status: 429 })

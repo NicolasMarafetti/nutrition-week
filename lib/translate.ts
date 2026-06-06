@@ -1,3 +1,5 @@
+import { prisma } from "@/lib/prisma"
+
 async function translate(text: string, langpair: string): Promise<string> {
   try {
     const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${langpair}`
@@ -21,4 +23,40 @@ export function translateToFrench(text: string): Promise<string> {
 
 export function translateToEnglish(text: string): Promise<string> {
   return translate(text, "fr|en")
+}
+
+/**
+ * Translate many English strings to French, using a DB cache so each
+ * distinct label is only sent to MyMemory once. Returns a source→target map.
+ */
+export async function translateManyToFrenchCached(
+  sources: string[]
+): Promise<Map<string, string>> {
+  const unique = [...new Set(sources)]
+  const result = new Map<string, string>()
+
+  // 1. Load already-cached translations
+  const cached = await prisma.translation.findMany({
+    where: { source: { in: unique } },
+  })
+  for (const c of cached) result.set(c.source, c.target)
+
+  // 2. Translate the misses (in parallel), then persist them
+  const misses = unique.filter((s) => !result.has(s))
+  const translated = await Promise.all(
+    misses.map(async (src) => ({ src, fr: await translate(src, "en|fr") }))
+  )
+
+  for (const { src, fr } of translated) {
+    result.set(src, fr)
+  }
+
+  if (translated.length > 0) {
+    await prisma.translation.createMany({
+      data: translated.map(({ src, fr }) => ({ source: src, target: fr })),
+      skipDuplicates: true,
+    })
+  }
+
+  return result
 }
