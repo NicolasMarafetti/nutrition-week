@@ -32,7 +32,7 @@ Reste ouvert (assumé) :
 
 Mis en place :
 - Table `Backup` (snapshots JSON horodatés dans Neon).
-- **Cron Vercel quotidien** (`vercel.json`, 03:00 UTC) → `GET /api/backup/run`, garde les 14 derniers.
+- **Cron Vercel mensuel** (`vercel.json`, le 1er du mois à 03:00 UTC) → `GET /api/backup/run`, garde les 14 derniers (~14 mois d'historique).
 - Snapshot manuel : `POST /api/backup?key=SECRET`.
 - Liste : `GET /api/backup?key=SECRET`.
 - Restauration (destructive, atomique) : `POST /api/backup/restore?key=SECRET` body `{ id? }` (dernier par défaut).
