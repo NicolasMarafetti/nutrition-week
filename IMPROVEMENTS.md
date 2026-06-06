@@ -43,7 +43,16 @@ Limite : les snapshots sont dans le même Neon → protègent contre une suppres
 
 Amélioration possible plus tard : page UI simple pour télécharger/restaurer un backup sans manipuler les URLs.
 
-## 5. (Plus tard) Détails mineurs
+## 5. Répartition des calories par repas
+
+**Idée** : en plus du total journalier, calculer/afficher une cible de calories **par repas** (petit-déj / déjeuner / en-cas / dîner), avec une répartition recommandée — typiquement manger plus le midi que le soir.
+
+**À faire** :
+- Définir une répartition cible par repas (ex. petit-déj 25%, déjeuner 35%, en-cas 10%, dîner 30% — à affiner).
+- Afficher pour chaque repas de la semaine : calories actuelles vs cible du repas, et un indicateur (trop / dans la cible / pas assez).
+- Idéalement directement sur la grille "Ma Semaine" ou dans le détail d'un repas.
+
+## 6. (Plus tard) Détails mineurs
 
 - Qualité de traduction MyMemory parfois mauvaise (ex : noms USDA avec mentions de programme USDA).
 - Plusieurs RDA micronutriments sont des valeurs fixes, non ajustées à l'âge/sexe (la signature `rdaFn` le permet pourtant).
