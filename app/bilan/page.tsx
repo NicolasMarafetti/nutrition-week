@@ -55,7 +55,7 @@ export default function BilanPage() {
   if (!data) return null
 
   const deficits = data.targets.filter((t) => t.pct < 90)
-  const ok = data.targets.filter((t) => t.pct >= 90)
+  const ok = data.targets.filter((t) => t.pct >= 90).sort((a, b) => a.pct - b.pct)
 
   const byGroup = (list: NutrientTarget[]) => {
     const map: Partial<Record<NutrientGroup, NutrientTarget[]>> = {}
