@@ -12,6 +12,9 @@ export interface NutrientDef {
   unit: string
   group: NutrientGroup
   usdaIds: number[]
+  // "sum" (default): additionne tous les IDs trouvés (ex: oméga-3 = ALA+EPA+DHA)
+  // "first": prend le premier ID disponible dans l'ordre (ex: calories, plusieurs façons de reporter l'énergie)
+  mode?: "sum" | "first"
   rdaFn: (profile: { age: number; weightKg: number; sex: "MALE" | "FEMALE" }) => number
   priority: number
 }
@@ -24,7 +27,9 @@ export const NUTRIENTS: NutrientDef[] = [
     label: "Calories",
     unit: "kcal",
     group: "macros",
-    usdaIds: [1008],
+    // 1008 = Energy (kcal), 2047/2048 = Energy via Atwater factors (Foundation foods)
+    usdaIds: [1008, 2047, 2048],
+    mode: "first",
     rdaFn: ({ weightKg }) => Math.round((10 * weightKg + 625 + 5) * 1.55 + 400),
     priority: 1,
   },
@@ -333,12 +338,24 @@ export type NutrientsMap = Record<string, number>
 export function extractNutrients(usdaNutrients: Array<{ nutrientId: number; value: number }>): NutrientsMap {
   const result: NutrientsMap = {}
   for (const def of NUTRIENTS) {
-    let total = 0
-    for (const id of def.usdaIds) {
-      const found = usdaNutrients.find((n) => n.nutrientId === id)
-      if (found) total += found.value
+    if (def.mode === "first") {
+      // Prend le premier ID disponible dans l'ordre de priorité (pas de somme)
+      for (const id of def.usdaIds) {
+        const found = usdaNutrients.find((n) => n.nutrientId === id)
+        if (found && found.value > 0) {
+          result[def.key] = found.value
+          break
+        }
+      }
+    } else {
+      // Somme de tous les IDs trouvés
+      let total = 0
+      for (const id of def.usdaIds) {
+        const found = usdaNutrients.find((n) => n.nutrientId === id)
+        if (found) total += found.value
+      }
+      if (total > 0) result[def.key] = total
     }
-    if (total > 0) result[def.key] = total
   }
   return result
 }
