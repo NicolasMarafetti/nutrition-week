@@ -4,9 +4,15 @@ import { useEffect, useState } from "react"
 import { GROUP_LABELS, type NutrientGroup } from "@/lib/nutrients"
 import type { NutrientTarget } from "@/lib/nutrition"
 
+interface Contribution {
+  name: string
+  amount: number
+}
+
 interface BilanData {
   targets: NutrientTarget[]
   waterMl: number
+  contributions: Record<string, Contribution[]>
 }
 
 function statusColor(pct: number) {
@@ -97,7 +103,7 @@ export default function BilanPage() {
                 </p>
                 <div className="space-y-2">
                   {items!.map((t) => (
-                    <NutrientRow key={t.key} t={t} />
+                    <NutrientRow key={t.key} t={t} contributions={data.contributions[t.key]} />
                   ))}
                 </div>
               </div>
@@ -114,7 +120,7 @@ export default function BilanPage() {
           </h2>
           <div className="space-y-2">
             {ok.map((t) => (
-              <NutrientRow key={t.key} t={t} compact />
+              <NutrientRow key={t.key} t={t} compact contributions={data.contributions[t.key]} />
             ))}
           </div>
         </section>
@@ -123,31 +129,75 @@ export default function BilanPage() {
   )
 }
 
-function NutrientRow({ t, compact = false }: { t: NutrientTarget; compact?: boolean }) {
+function NutrientRow({
+  t,
+  compact = false,
+  contributions,
+}: {
+  t: NutrientTarget
+  compact?: boolean
+  contributions?: Contribution[]
+}) {
+  const [open, setOpen] = useState(false)
   const pctCapped = Math.min(t.pct, 100)
+  const hasDetail = (contributions?.length ?? 0) > 0
+
   return (
     <div className={`bg-zinc-900 border border-zinc-800 rounded-lg px-4 ${compact ? "py-2" : "py-3"}`}>
-      <div className="flex items-center justify-between mb-1.5">
-        <span className="text-zinc-200 text-sm font-medium">{t.label}</span>
-        <div className="flex items-center gap-3 text-xs">
-          <span className="text-zinc-500">
-            {t.actual} / {t.target} {t.unit}
+      <button
+        type="button"
+        onClick={() => hasDetail && setOpen((o) => !o)}
+        className={`w-full text-left ${hasDetail ? "cursor-pointer" : "cursor-default"}`}
+      >
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-zinc-200 text-sm font-medium flex items-center gap-1.5">
+            {hasDetail && (
+              <span className={`text-zinc-500 text-[10px] transition-transform ${open ? "rotate-90" : ""}`}>
+                ▶
+              </span>
+            )}
+            {t.label}
           </span>
-          <span className={`font-semibold ${statusColor(t.pct)}`}>
-            {t.pct}% — {statusLabel(t.pct)}
-          </span>
+          <div className="flex items-center gap-3 text-xs">
+            <span className="text-zinc-500">
+              {t.actual} / {t.target} {t.unit}
+            </span>
+            <span className={`font-semibold ${statusColor(t.pct)}`}>
+              {t.pct}% — {statusLabel(t.pct)}
+            </span>
+          </div>
         </div>
-      </div>
-      <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
-        <div
-          className={`h-full rounded-full transition-all ${statusBg(t.pct)}`}
-          style={{ width: `${pctCapped}%` }}
-        />
-      </div>
+        <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+          <div
+            className={`h-full rounded-full transition-all ${statusBg(t.pct)}`}
+            style={{ width: `${pctCapped}%` }}
+          />
+        </div>
+      </button>
+
       {!compact && t.deficit > 0 && (
         <p className="text-zinc-500 text-xs mt-1.5">
           Manque : +{t.deficit} {t.unit}/jour
         </p>
+      )}
+
+      {open && hasDetail && (
+        <div className="mt-3 pt-3 border-t border-zinc-800 space-y-1.5">
+          <p className="text-zinc-600 text-[11px] uppercase tracking-wider">
+            Apports / jour
+          </p>
+          {contributions!.map((c, i) => {
+            const share = t.actual > 0 ? Math.round((c.amount / t.actual) * 100) : 0
+            return (
+              <div key={i} className="flex items-center justify-between text-xs">
+                <span className="text-zinc-300 truncate pr-2">{c.name}</span>
+                <span className="text-zinc-500 shrink-0">
+                  {c.amount} {t.unit} <span className="text-zinc-600">({share}%)</span>
+                </span>
+              </div>
+            )
+          })}
+        </div>
       )}
     </div>
   )
