@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react"
 import MealDialog from "@/components/meal-dialog"
 import CopyDayDialog from "@/components/copy-day-dialog"
+import { displayName } from "@/lib/food-name"
 import type { MealEntry, DayOfWeek, MealType } from "@/types"
 
 const DAYS: { key: DayOfWeek; label: string }[] = [
@@ -41,7 +42,7 @@ export default function WeekPage() {
   function cellSummary(es: MealEntry[]) {
     if (es.length === 0) return null
     return es.map((e) => {
-      const name = e.food?.name ?? e.customFood?.name ?? "?"
+      const name = e.food ? displayName(e.food) : (e.customFood?.name ?? "?")
       const short = name.length > 22 ? name.slice(0, 20) + "…" : name
       return `${short} (${e.grams}g)`
     })

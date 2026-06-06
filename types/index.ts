@@ -8,7 +8,7 @@ export interface MealEntry {
   grams: number
   foodId?: number | null
   customFoodId?: number | null
-  food?: { fdcId: number; name: string; nutrients: Record<string, number> } | null
+  food?: { fdcId: number; name: string; nameFr?: string | null; nutrients: Record<string, number> } | null
   customFood?: { id: number; name: string; nutrients: Record<string, number> } | null
 }
 

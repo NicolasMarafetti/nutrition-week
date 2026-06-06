@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { searchFoods, getFoodDetail, normalizeFoodNutrients } from "@/lib/usda"
 import { extractNutrients } from "@/lib/nutrients"
+import { translateToFrench } from "@/lib/translate"
 import { NextRequest } from "next/server"
 
 export async function GET(req: NextRequest) {
@@ -50,8 +51,10 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: "IGNORED" }, { status: 422 })
   }
 
+  const nameFr = await translateToFrench(detail.description)
+
   const food = await prisma.food.create({
-    data: { fdcId: detail.fdcId, name: detail.description, dataType: detail.dataType, nutrients },
+    data: { fdcId: detail.fdcId, name: detail.description, nameFr, dataType: detail.dataType, nutrients },
   })
   return Response.json(food)
 }

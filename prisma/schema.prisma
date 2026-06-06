@@ -20,6 +20,7 @@ model Profile {
 model Food {
   fdcId       Int         @id
   name        String
+  nameFr      String?
   dataType    String
   nutrients   Json
   cachedAt    DateTime    @default(now())

@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import { NUTRIENTS, GROUP_LABELS, type NutrientGroup } from "@/lib/nutrients"
+import { displayName } from "@/lib/food-name"
 import Link from "next/link"
 
 export default async function FoodDetailPage(props: PageProps<"/foods/[fdcId]">) {
@@ -16,8 +17,8 @@ export default async function FoodDetailPage(props: PageProps<"/foods/[fdcId]">)
       <div className="flex items-start gap-4">
         <Link href="/" className="text-zinc-500 hover:text-zinc-300 text-sm mt-1">← Semaine</Link>
         <div>
-          <h1 className="text-xl font-semibold text-zinc-100">{food.name}</h1>
-          <p className="text-zinc-500 text-sm mt-0.5">{food.dataType} — valeurs pour 100g</p>
+          <h1 className="text-xl font-semibold text-zinc-100">{displayName(food)}</h1>
+          <p className="text-zinc-500 text-sm mt-0.5">{food.dataType} — {food.name} — valeurs pour 100g</p>
         </div>
       </div>
 

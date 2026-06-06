@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import CustomFoodForm from "@/components/custom-food-form"
 import Link from "next/link"
+import { displayName } from "@/lib/food-name"
 import type { MealEntry, UsdaSearchResult } from "@/types"
 
 interface Props {
@@ -148,7 +149,7 @@ export default function MealDialog({ day, meal, entries, open, onClose, onRefres
                   onClick={onClose}
                   className="flex-1 text-zinc-200 truncate hover:text-emerald-400 transition-colors"
                 >
-                  {e.food?.name}
+                  {displayName(e.food)}
                 </Link>
               ) : (
                 <span className="flex-1 text-zinc-200 truncate">{e.customFood?.name}</span>
