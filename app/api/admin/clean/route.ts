@@ -1,7 +1,10 @@
 import { prisma } from "@/lib/prisma"
+import { isAuthorized } from "@/lib/admin-auth"
+import { NextRequest } from "next/server"
 
 // DELETE /api/admin/clean — supprime les aliments sans calories ni protéines
-export async function DELETE() {
+export async function DELETE(req: NextRequest) {
+  if (!isAuthorized(req)) return new Response("Unauthorized", { status: 401 })
   const foods = await prisma.food.findMany()
   const incomplete = foods.filter((f) => {
     const n = f.nutrients as Record<string, number>

@@ -18,22 +18,30 @@ Note : un vrai système `target`/`ceiling`/`range` reste l'option propre si on v
 - Source unique de vérité pour le TDEE/cible calorique (idéalement Mifflin-St Jeor complet, partagé entre Profil et Bilan).
 - Vérifier que les macros dérivées (glucides ~45% des calories) utilisent la même base.
 
-## 3. Sécuriser les routes destructrices `/api/admin/*`
+## 3. Sécuriser l'écriture — PARTIELLEMENT FAIT / DÉCISION
 
-**Problème** : `/api/admin/clean` (supprime des aliments + entrées repas), `reextract`, `translate` sont ouvertes sans authentification. Risque de perte de données une fois en ligne.
+Décision utilisateur : ne **pas** verrouiller l'accès (le site reste public, indexé Google). On mitige plutôt la conséquence par des backups (point #4). 
 
-**À faire** :
-- Protéger derrière un secret (header/clé via variable d'env) ou les désactiver en production.
-- Réflexion plus large : l'app n'a aucune auth, donc les routes d'écriture normales (ajout/suppression de repas) sont aussi ouvertes. Pour un usage perso en ligne, envisager un mot de passe simple à l'échelle du site.
+Fait quand même :
+- ✅ Routes `/api/admin/*` (clean, reextract, translate) + `/api/backup*`, `/api/export` protégées par `CRON_SECRET`.
 
-## 4. Backup régulier de la base de données (Neon)
+Reste ouvert (assumé) :
+- Les routes d'écriture normales (`/api/meals`, `/api/profile`) restent publiques : un visiteur peut éditer/supprimer des repas. Couvert par la possibilité de restaurer (point #4). Si un jour ça devient gênant, ajouter un mot de passe simple à l'échelle du site.
 
-**Problème** : toutes les données repas vivent dans Neon. Une suppression (accident, route admin, visiteur) = perte sèche. Git ne sauvegarde que le code.
+## 4. Backup régulier de la base de données (Neon) — FAIT ✅
 
-**À faire** :
-- Mettre en place un export/backup régulier de la BDD Neon (les repas, le profil, les aliments custom).
-- Pistes : Neon a des branches/snapshots ; sinon un petit script `pg_dump` planifié, ou une route d'export JSON déclenchée périodiquement.
-- À articuler avec le point #3 (sécuriser l'écriture) : les deux protègent les données.
+Mis en place :
+- Table `Backup` (snapshots JSON horodatés dans Neon).
+- **Cron Vercel quotidien** (`vercel.json`, 03:00 UTC) → `GET /api/backup/run`, garde les 14 derniers.
+- Snapshot manuel : `POST /api/backup?key=SECRET`.
+- Liste : `GET /api/backup?key=SECRET`.
+- Restauration (destructive, atomique) : `POST /api/backup/restore?key=SECRET` body `{ id? }` (dernier par défaut).
+- Export JSON hors-ligne téléchargeable : `GET /api/export?key=SECRET`.
+- Auth par `CRON_SECRET` (en-tête Bearer auto de Vercel Cron, ou `?key=`).
+
+Limite : les snapshots sont dans le même Neon → protègent contre une suppression via l'app, pas contre une perte totale de l'instance Neon. Pour du hors-site, utiliser l'export JSON régulièrement.
+
+Amélioration possible plus tard : page UI simple pour télécharger/restaurer un backup sans manipuler les URLs.
 
 ## 5. (Plus tard) Détails mineurs
 

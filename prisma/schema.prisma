@@ -61,6 +61,13 @@ model Translation {
   createdAt DateTime @default(now())
 }
 
+model Backup {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  trigger   String   @default("manual") // "cron" | "manual"
+  data      Json
+}
+
 enum Sex {
   MALE
   FEMALE
