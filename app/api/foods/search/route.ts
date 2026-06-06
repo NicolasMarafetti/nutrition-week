@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { searchFoods, getFoodDetail, normalizeFoodNutrients } from "@/lib/usda"
 import { extractNutrients } from "@/lib/nutrients"
-import { translateToFrench } from "@/lib/translate"
+import { translateToFrench, translateToEnglish } from "@/lib/translate"
 import { NextRequest } from "next/server"
 
 export async function GET(req: NextRequest) {
@@ -9,10 +9,11 @@ export async function GET(req: NextRequest) {
   if (!query) return Response.json({ error: "q is required" }, { status: 400 })
 
   try {
-    const [results, ignoredList] = await Promise.all([
-      searchFoods(query),
+    const [englishQuery, ignoredList] = await Promise.all([
+      translateToEnglish(query),
       prisma.ignoredFood.findMany({ select: { fdcId: true } }),
     ])
+    const results = await searchFoods(englishQuery)
     const ignoredIds = new Set(ignoredList.map((f) => f.fdcId))
     const filtered = results.filter((r) => !ignoredIds.has(r.fdcId))
     return Response.json(filtered)

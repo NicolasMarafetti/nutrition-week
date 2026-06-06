@@ -183,7 +183,7 @@ export default function MealDialog({ day, meal, entries, open, onClose, onRefres
           {/* Onglet USDA */}
           <TabsContent value="usda" className="space-y-3 mt-3">
             <Input
-              placeholder="Rechercher (en anglais)…"
+              placeholder="Rechercher un aliment (français ou anglais)…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500"
