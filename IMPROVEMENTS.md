@@ -62,22 +62,39 @@ Cible de calories **par repas**, dérivée du total journalier `calorieTarget()`
 
 **Reste à coder (phase 2)** : helper `mealCalorieTargets(profile)` dans `lib/nutrients.ts`, calcul des calories réelles par créneau sur la grille, indicateurs couleur, affichage dans le dialog.
 
-## 6. CRON journalier : optimiseur de plan hebdomadaire
+## 6. CRON journalier : optimiseur de plan via agent Claude — SPEC VALIDÉE (brainstorming OK)
 
-**Idée** : un cron quotidien qui cherche un *meilleur* plan de repas pour la semaine type et le propose. Optimisation multi-critères, chaque plan candidat reçoit un score combinant :
+**Concept** : un cron quotidien où **Claude (agent IA) raisonne comme un nutritionniste** pour améliorer le plan hebdomadaire. Pas d'algorithme numérique aveugle — Claude identifie une carence, réfléchit à quel aliment la comblerait, le cherche dans l'USDA, le teste.
 
-- **Équilibre** : à quel point le bilan couvre les besoins (proche de 100% sur tous les nutriments). C'est le critère principal.
-- **Calories par jour** : le total calorique de chaque jour doit être le plus proche possible de la cible journalière (`calorieTarget`). Idéalement aussi proche des cibles par repas (cf. #5 : 30/35/10/25).
-- **Simplicité** : moins il y a d'aliments différents par repas, mieux c'est (repas faciles à préparer). Pénaliser les repas avec trop d'ingrédients.
-- **Complexité / régularité** : pénaliser une trop grande variation d'un jour à l'autre (l'objectif est une semaine type cohérente, simple à faire les courses et à cuisiner). Récompenser la répétition raisonnable entre jours.
+### Architecture (validée)
+1. Le cron donne à Claude le contexte : plan actuel + calories par repas + bilan (carences détaillées) + cibles.
+2. **Claude (modèle Opus)** raisonne et utilise des **outils** (tool use) : `search_usda(query)`, `get_food_detail(fdcId)`, en boucle (réfléchit → cherche → teste → ajuste).
+3. Claude renvoie un **plan candidat** (JSON).
+4. **Notre code calcule un score déterministe** du candidat vs plan actuel.
+5. **Si le score est meilleur → applique automatiquement + historise.** Sinon, ne touche à rien.
+6. **Page dédiée** : historique des plans appliqués, avec **retour arrière** vers n'importe quel plan précédent.
 
-**À détailler / décisions ouvertes** :
-- Pondération des 3 critères (équilibre vs simplicité vs régularité) — réglable ?
-- Espace de recherche : parmi quels aliments ? (aliments déjà utilisés par l'utilisateur, une liste blanche, ou tout l'USDA ?) Garder les suppléments fixes (créatine, collagène).
-- Algorithme : recherche locale / recuit simulé / génétique — partir du plan actuel et l'améliorer par petites modifications.
-- Résultat : **proposer** le plan (ne pas écraser automatiquement) — l'utilisateur valide. Stocker la proposition + son score + le détail des gains vs plan actuel.
-- Respecter les contraintes : structure 4 repas/jour, cible calorique.
-- Coût : éviter de marteler l'API USDA (réutiliser le cache d'aliments).
+### Décisions validées
+- **Leviers** : ajuster les quantités ET remplacer/ajouter des aliments.
+- **Jours** : variables autorisés (donc le critère régularité s'applique).
+- **Sourcing** : piloté par les carences, requêtes USDA limitées à **Foundation / SR Legacy** (vrais aliments complets).
+- **Modèle** : **Opus** (qualité de raisonnement max).
+- **Juge** : **notre score déterministe** décide d'appliquer (Claude propose seulement).
+- **Auto-application** : oui, dès que mieux noté. Pas de garde-fou supplémentaire — le score-gate fait foi (un aliment incomplet ou la suppression d'un supplément dégraderait le score, donc serait rejeté naturellement).
+
+### Score (déterministe, somme pondérée)
+- **Équilibre** (poids fort) : pour chaque nutriment, crédit = min(réel/cible, 1) — couvrir tout compte, pas de bonus à dépasser.
+- **Calories/jour** : pénalité sur l'écart à la cible journalière + écart aux cibles par repas (30/35/10/25).
+- **Simplicité** : pénalité par aliment supplémentaire dans un repas.
+- **Régularité** : pénalité quand les jours diffèrent trop.
+- Pondérations à régler finement lors de l'implémentation.
+
+### Points pratiques à gérer à l'implémentation
+- **Clé API Anthropic** (nouvelle variable d'env) + budget. ⚠️ Opus quotidien = coût non négligeable (estimer ~$3-15/mois selon tokens) ; utiliser la **mise en cache de prompt** pour réduire.
+- **Limite de temps du cron Vercel** (~60s Hobby) : Opus + plusieurs allers-retours d'outils peut être long → **borner le nombre de tours d'agent par run** ; le progrès s'accumule jour après jour via l'historique.
+- Réutiliser le cache d'aliments (table `Food`) pour limiter les appels USDA.
+- Outils à coder + fonction d'application du plan + modèle `PlanHistory` (snapshots de plans appliqués avec score).
+- Utiliser le skill `claude-api` (SDK Anthropic + prompt caching) au moment de coder.
 
 ## 7. Optimisation UX/UI mobile
 
