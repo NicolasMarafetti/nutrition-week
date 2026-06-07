@@ -43,14 +43,24 @@ Limite : les snapshots sont dans le même Neon → protègent contre une suppres
 
 Amélioration possible plus tard : page UI simple pour télécharger/restaurer un backup sans manipuler les URLs.
 
-## 5. Répartition des calories par repas
+## 5. Répartition des calories par repas — SPEC VALIDÉE (phase 1 brainstorming OK)
 
-**Idée** : en plus du total journalier, calculer/afficher une cible de calories **par repas** (petit-déj / déjeuner / en-cas / dîner), avec une répartition recommandée — typiquement manger plus le midi que le soir.
+Cible de calories **par repas**, dérivée du total journalier `calorieTarget()`.
 
-**À faire** :
-- Définir une répartition cible par repas (ex. petit-déj 25%, déjeuner 35%, en-cas 10%, dîner 30% — à affiner).
-- Afficher pour chaque repas de la semaine : calories actuelles vs cible du repas, et un indicateur (trop / dans la cible / pas assez).
-- Idéalement directement sur la grille "Ma Semaine" ou dans le détail d'un repas.
+**Répartition fixe (codée en dur)** — front-loading décroissant, appuyé par la littérature (Jakubowicz 2013 *Obesity* ; AJCN déjeuner>dîner ; Diabetologia 2015 ; cadre AHA *Circulation* 2017) :
+- Petit-déjeuner **30%**, Déjeuner **35%**, En-cas **10%**, Dîner **25%**.
+
+**Calcul** : pour chaque créneau (jour × repas), somme des calories réelles des aliments vs cible du créneau (= % × calorieTarget). Données déjà disponibles.
+
+**Tolérance** : ±15% autour de la cible du repas → "dans la cible". En dehors : trop léger (en dessous) / trop lourd (au dessus).
+
+**Affichage (les deux)** :
+- Grille "Ma Semaine" : pastille/indicateur couleur par cellule (vert dans la cible, orange/rouge hors cible).
+- Dialog du repas : cible chiffrée + écart (ex. "Cible 1030 kcal · actuel 820 · -210").
+
+**Hors périmètre phase 1** : macros par repas (calories seulement), répartition configurable (fixe pour l'instant).
+
+**Reste à coder (phase 2)** : helper `mealCalorieTargets(profile)` dans `lib/nutrients.ts`, calcul des calories réelles par créneau sur la grille, indicateurs couleur, affichage dans le dialog.
 
 ## 6. CRON journalier : optimiseur de plan hebdomadaire
 
