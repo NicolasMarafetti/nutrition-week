@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react"
 import MealDialog from "@/components/meal-dialog"
 import CopyDayDialog from "@/components/copy-day-dialog"
 import { displayName } from "@/lib/food-name"
+import { mealCalorieTargets, mealStatus, type BodyProfile, type MealKey } from "@/lib/nutrients"
 import type { MealEntry, DayOfWeek, MealType } from "@/types"
 
 const DAYS: { key: DayOfWeek; label: string }[] = [
@@ -25,6 +26,7 @@ const MEALS: { key: MealType; label: string }[] = [
 
 export default function WeekPage() {
   const [entries, setEntries] = useState<MealEntry[]>([])
+  const [profile, setProfile] = useState<BodyProfile | null>(null)
   const [selected, setSelected] = useState<{ day: DayOfWeek; meal: MealType } | null>(null)
   const [copyFrom, setCopyFrom] = useState<DayOfWeek | null>(null)
 
@@ -34,9 +36,21 @@ export default function WeekPage() {
   }, [])
 
   useEffect(() => { load() }, [load])
+  useEffect(() => {
+    fetch("/api/profile").then((r) => r.json()).then((p) => p && setProfile(p))
+  }, [])
+
+  const mealTargets = profile ? mealCalorieTargets(profile) : null
 
   function cellEntries(day: DayOfWeek, meal: MealType) {
     return entries.filter((e) => e.day === day && e.meal === meal)
+  }
+
+  function cellCalories(es: MealEntry[]) {
+    return es.reduce((sum, e) => {
+      const cal = (e.food?.nutrients?.calories ?? e.customFood?.nutrients?.calories ?? 0)
+      return sum + (cal * e.grams) / 100
+    }, 0)
   }
 
   function cellSummary(es: MealEntry[]) {
@@ -74,14 +88,22 @@ export default function WeekPage() {
             </tr>
           </thead>
           <tbody>
-            {MEALS.map((m) => (
+            {MEALS.map((m) => {
+              const target = mealTargets?.[m.key as MealKey]
+              return (
               <tr key={m.key}>
                 <td className="text-zinc-500 text-xs font-medium pr-3 py-1.5 align-top pt-3">
-                  {m.label}
+                  <div>{m.label}</div>
+                  {target != null && (
+                    <div className="text-zinc-600 text-[11px] mt-0.5">cible {target} kcal</div>
+                  )}
                 </td>
                 {DAYS.map((d) => {
                   const es = cellEntries(d.key, m.key)
                   const summary = cellSummary(es)
+                  const kcal = Math.round(cellCalories(es))
+                  const status = target != null && es.length > 0 ? mealStatus(kcal, target) : null
+                  const deltaPct = target ? Math.round((kcal / target - 1) * 100) : 0
                   return (
                     <td key={d.key} className="px-1 py-1.5 align-top">
                       <button
@@ -93,6 +115,23 @@ export default function WeekPage() {
                             : "border-zinc-800 bg-zinc-900/50 hover:border-zinc-700 hover:bg-zinc-900",
                         ].join(" ")}
                       >
+                        {status && (
+                          <div className="flex items-center gap-1.5 mb-1.5 text-[11px] font-medium">
+                            <span
+                              className={`inline-block w-2 h-2 rounded-full ${
+                                status === "ok" ? "bg-emerald-500" : "bg-amber-500"
+                              }`}
+                            />
+                            <span className={status === "ok" ? "text-emerald-400" : "text-amber-400"}>
+                              {kcal} kcal
+                            </span>
+                            {status !== "ok" && (
+                              <span className="text-amber-500/80">
+                                {deltaPct > 0 ? "+" : ""}{deltaPct}%
+                              </span>
+                            )}
+                          </div>
+                        )}
                         {summary ? (
                           <ul className="space-y-0.5">
                             {summary.map((s, i) => (
@@ -109,7 +148,8 @@ export default function WeekPage() {
                   )
                 })}
               </tr>
-            ))}
+              )
+            })}
           </tbody>
         </table>
       </div>
@@ -119,6 +159,7 @@ export default function WeekPage() {
           day={selected.day}
           meal={selected.meal}
           entries={cellEntries(selected.day, selected.meal)}
+          mealTarget={mealTargets?.[selected.meal as MealKey]}
           open={true}
           onClose={() => setSelected(null)}
           onRefresh={load}

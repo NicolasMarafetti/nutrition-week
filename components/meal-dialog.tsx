@@ -10,12 +10,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import CustomFoodForm from "@/components/custom-food-form"
 import Link from "next/link"
 import { displayName } from "@/lib/food-name"
+import { mealStatus } from "@/lib/nutrients"
 import type { MealEntry, UsdaSearchResult } from "@/types"
 
 interface Props {
   day: string
   meal: string
   entries: MealEntry[]
+  mealTarget?: number
   open: boolean
   onClose: () => void
   onRefresh: () => void
@@ -28,7 +30,7 @@ const MEAL_LABELS: Record<string, string> = {
   DINNER: "Dîner",
 }
 
-export default function MealDialog({ day, meal, entries, open, onClose, onRefresh }: Props) {
+export default function MealDialog({ day, meal, entries, mealTarget, open, onClose, onRefresh }: Props) {
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<UsdaSearchResult[]>([])
   const [searching, setSearching] = useState(false)
@@ -127,6 +129,16 @@ export default function MealDialog({ day, meal, entries, open, onClose, onRefres
     setCustomFoods((prev) => [...prev, food])
   }
 
+  const mealKcal = Math.round(
+    entries.reduce((sum, e) => {
+      const cal = e.food?.nutrients?.calories ?? e.customFood?.nutrients?.calories ?? 0
+      return sum + (cal * e.grams) / 100
+    }, 0)
+  )
+  const status = mealTarget ? mealStatus(mealKcal, mealTarget) : null
+  const deltaPct = mealTarget ? Math.round((mealKcal / mealTarget - 1) * 100) : 0
+  const statusLabel = status === "ok" ? "ok" : status === "low" ? "trop léger" : "trop lourd"
+
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="bg-zinc-900 border-zinc-700 max-w-3xl sm:max-w-3xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
@@ -135,6 +147,23 @@ export default function MealDialog({ day, meal, entries, open, onClose, onRefres
             {MEAL_LABELS[meal]} — {day}
           </DialogTitle>
         </DialogHeader>
+
+        {/* Bilan calories du repas */}
+        {mealTarget != null && (
+          <div className="flex items-center gap-2 text-sm border border-zinc-800 rounded-lg px-3 py-2">
+            <span
+              className={`inline-block w-2.5 h-2.5 rounded-full ${
+                status === "ok" ? "bg-emerald-500" : "bg-amber-500"
+              }`}
+            />
+            <span className="text-zinc-300">
+              Calories : <span className="text-zinc-100 font-medium">{mealKcal}</span> / {mealTarget} kcal
+            </span>
+            <span className={`ml-auto text-xs font-medium ${status === "ok" ? "text-emerald-400" : "text-amber-400"}`}>
+              {deltaPct > 0 ? "+" : ""}{deltaPct}% · {statusLabel}
+            </span>
+          </div>
+        )}
 
         {/* Aliments du repas */}
         <div className="space-y-2">

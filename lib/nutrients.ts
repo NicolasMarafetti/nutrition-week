@@ -33,6 +33,39 @@ export function calorieTarget(p: BodyProfile): number {
   return tdee(p) + MASS_GAIN_SURPLUS
 }
 
+export type MealKey = "BREAKFAST" | "LUNCH" | "SNACK" | "DINNER"
+
+// Répartition des calories par repas (front-loading, dîner allégé).
+export const MEAL_DISTRIBUTION: Record<MealKey, number> = {
+  BREAKFAST: 0.3,
+  LUNCH: 0.35,
+  SNACK: 0.1,
+  DINNER: 0.25,
+}
+
+// Tolérance autour de la cible d'un repas pour être considéré "dans la cible".
+export const MEAL_TOLERANCE = 0.15
+
+/** Cible calorique de chaque repas (= % × cible journalière). */
+export function mealCalorieTargets(p: BodyProfile): Record<MealKey, number> {
+  const daily = calorieTarget(p)
+  return {
+    BREAKFAST: Math.round(daily * MEAL_DISTRIBUTION.BREAKFAST),
+    LUNCH: Math.round(daily * MEAL_DISTRIBUTION.LUNCH),
+    SNACK: Math.round(daily * MEAL_DISTRIBUTION.SNACK),
+    DINNER: Math.round(daily * MEAL_DISTRIBUTION.DINNER),
+  }
+}
+
+/** Statut d'un repas vs sa cible : "low" (trop léger), "ok", "high" (trop lourd). */
+export function mealStatus(actual: number, target: number): "low" | "ok" | "high" {
+  if (target <= 0) return "ok"
+  const ratio = actual / target
+  if (ratio < 1 - MEAL_TOLERANCE) return "low"
+  if (ratio > 1 + MEAL_TOLERANCE) return "high"
+  return "ok"
+}
+
 export interface NutrientDef {
   key: string
   label: string
