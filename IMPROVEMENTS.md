@@ -105,7 +105,16 @@ La spec automatisée ci-dessous est **conservée pour référence** si on veut u
 - Outils à coder + fonction d'application du plan + modèle `PlanHistory` (snapshots de plans appliqués avec score).
 - Utiliser le skill `claude-api` (SDK Anthropic + prompt caching) au moment de coder.
 
-## 7. Optimisation UX/UI mobile
+## 7. Optimisation UX/UI mobile — FAIT ✅
+
+Cible : iPhone 12 mini (360 × 780 pt CSS). Responsive complet :
+- **Ma Semaine** : grille 7×4 conservée en desktop (`lg+`) ; en mobile, **vue par jour** (sélecteur de jour ouvrant sur le jour courant + 4 cartes repas empilées avec pastille calories). Bouton « Copier ce jour ».
+- **Dialog repas** : quasi plein écran sur mobile ; correction du débordement (grid → `[&>*]:min-w-0`, noms tronqués, champs grammes visibles).
+- **Bilan** : lignes nutriments label/valeurs empilées sous `sm`.
+- **Profil** : champs pleine largeur, objectifs en grille lisible.
+- **Nav** : padding réduit + scroll horizontal de sécurité sous 360px.
+
+### (historique de la spec)
 
 **Idée** : l'app est pensée desktop (grille 7×4 large, dialogs centrés). L'optimiser pour le téléphone de l'utilisateur — c'est là qu'il consulte « ce qu'il doit manger ».
 

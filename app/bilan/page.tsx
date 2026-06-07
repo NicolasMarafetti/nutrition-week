@@ -75,7 +75,7 @@ export default function BilanPage() {
 
   return (
     <div className="space-y-8 max-w-4xl">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-xl font-semibold">Bilan nutritionnel</h1>
         <p className="text-zinc-500 text-sm">Moyenne journalière sur ta semaine type</p>
       </div>
@@ -149,7 +149,7 @@ function NutrientRow({
         onClick={() => hasDetail && setOpen((o) => !o)}
         className={`w-full text-left ${hasDetail ? "cursor-pointer" : "cursor-default"}`}
       >
-        <div className="flex items-center justify-between mb-1.5">
+        <div className="flex flex-col gap-0.5 sm:flex-row sm:items-center sm:justify-between mb-1.5">
           <span className="text-zinc-200 text-sm font-medium flex items-center gap-1.5">
             {hasDetail && (
               <span className={`text-zinc-500 text-[10px] transition-transform ${open ? "rotate-90" : ""}`}>
@@ -158,7 +158,7 @@ function NutrientRow({
             )}
             {t.label}
           </span>
-          <div className="flex items-center gap-3 text-xs">
+          <div className="flex items-center gap-3 text-xs shrink-0 pl-3.5 sm:pl-0">
             <span className="text-zinc-500">
               {t.actual} / {t.target} {t.unit}
             </span>

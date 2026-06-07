@@ -141,7 +141,7 @@ export default function MealDialog({ day, meal, entries, mealTarget, open, onClo
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="bg-zinc-900 border-zinc-700 max-w-3xl sm:max-w-3xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
+      <DialogContent className="bg-zinc-900 border-zinc-700 max-w-[calc(100vw-1rem)] sm:max-w-3xl max-h-[92vh] overflow-y-auto overflow-x-hidden [&>*]:min-w-0">
         <DialogHeader>
           <DialogTitle className="text-zinc-100">
             {MEAL_LABELS[meal]} — {day}
@@ -176,18 +176,18 @@ export default function MealDialog({ day, meal, entries, mealTarget, open, onClo
                 <Link
                   href={`/foods/${e.foodId}`}
                   onClick={onClose}
-                  className="flex-1 text-zinc-200 truncate hover:text-emerald-400 transition-colors"
+                  className="flex-1 min-w-0 text-zinc-200 truncate hover:text-emerald-400 transition-colors"
                 >
                   {displayName(e.food)}
                 </Link>
               ) : (
-                <span className="flex-1 text-zinc-200 truncate">{e.customFood?.name}</span>
+                <span className="flex-1 min-w-0 text-zinc-200 truncate">{e.customFood?.name}</span>
               )}
               <Input
                 type="number"
                 defaultValue={e.grams}
                 onBlur={(ev) => updateGrams(e.id, Number(ev.target.value))}
-                className="w-20 bg-zinc-800 border-zinc-700 text-zinc-100 text-xs"
+                className="w-16 shrink-0 bg-zinc-800 border-zinc-700 text-zinc-100 text-xs"
               />
               <span className="text-zinc-500 text-xs">g</span>
               <button
@@ -252,9 +252,9 @@ export default function MealDialog({ day, meal, entries, mealTarget, open, onClo
                     placeholder="100"
                     value={gramsMap[r.fdcId] ?? ""}
                     onChange={(e) => setGramsMap((m) => ({ ...m, [r.fdcId]: e.target.value }))}
-                    className="w-20 bg-zinc-800 border-zinc-700 text-zinc-100 text-xs"
+                    className="w-16 shrink-0 bg-zinc-800 border-zinc-700 text-zinc-100 text-xs"
                   />
-                  <span className="text-zinc-500 text-xs">g</span>
+                  <span className="text-zinc-500 text-xs shrink-0">g</span>
                   <Button
                     size="sm"
                     onClick={() => addUsdaFood(r.fdcId)}
@@ -276,15 +276,15 @@ export default function MealDialog({ day, meal, entries, mealTarget, open, onClo
               <div className="space-y-1.5 max-h-64 overflow-y-auto">
                 {customFoods.map((f) => (
                   <div key={f.id} className="flex items-center gap-2 text-sm">
-                    <span className="flex-1 text-zinc-200 truncate">{f.name}</span>
+                    <span className="flex-1 min-w-0 text-zinc-200 truncate">{f.name}</span>
                     <Input
                       type="number"
                       placeholder="100"
                       value={customGrams[f.id] ?? ""}
                       onChange={(e) => setCustomGrams((m) => ({ ...m, [f.id]: e.target.value }))}
-                      className="w-20 bg-zinc-800 border-zinc-700 text-zinc-100 text-xs"
+                      className="w-16 shrink-0 bg-zinc-800 border-zinc-700 text-zinc-100 text-xs"
                     />
-                    <span className="text-zinc-500 text-xs">g</span>
+                    <span className="text-zinc-500 text-xs shrink-0">g</span>
                     <Button
                       size="sm"
                       onClick={() => addCustomFood(f.id)}

@@ -57,7 +57,7 @@ export default function ProfilPage() {
               [key]: type === "number" ? Number(e.target.value) : e.target.value,
             }))
           }
-          className="bg-zinc-900 border-zinc-700 w-40"
+          className="bg-zinc-900 border-zinc-700 w-full"
         />
       </div>
     )
@@ -84,7 +84,7 @@ export default function ProfilPage() {
           <select
             value={form.sex}
             onChange={(e) => setForm((f) => ({ ...f, sex: e.target.value as "MALE" | "FEMALE" }))}
-            className="bg-zinc-900 border border-zinc-700 rounded-md px-3 py-2 text-sm text-zinc-100 w-40"
+            className="bg-zinc-900 border border-zinc-700 rounded-md px-3 py-2 text-sm text-zinc-100 w-full"
           >
             <option value="MALE">Homme</option>
             <option value="FEMALE">Femme</option>
