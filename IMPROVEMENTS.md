@@ -56,7 +56,7 @@ Amélioration possible plus tard : page UI simple pour télécharger/restaurer u
 
 **Idée** : un cron quotidien qui cherche un *meilleur* plan de repas pour la semaine type et le propose. Optimisation multi-critères, chaque plan candidat reçoit un score combinant :
 
-- **Équilibre** : à quel point le bilan couvre les besoins (proche de 100% sur tous les nutriments, sans dépasser les plafonds type graisses saturées / sodium). C'est le critère principal.
+- **Équilibre** : à quel point le bilan couvre les besoins (proche de 100% sur tous les nutriments). C'est le critère principal.
 - **Simplicité** : moins il y a d'aliments différents par repas, mieux c'est (repas faciles à préparer). Pénaliser les repas avec trop d'ingrédients.
 - **Complexité / régularité** : pénaliser une trop grande variation d'un jour à l'autre (l'objectif est une semaine type cohérente, simple à faire les courses et à cuisiner). Récompenser la répétition raisonnable entre jours.
 
@@ -65,7 +65,7 @@ Amélioration possible plus tard : page UI simple pour télécharger/restaurer u
 - Espace de recherche : parmi quels aliments ? (aliments déjà utilisés par l'utilisateur, une liste blanche, ou tout l'USDA ?) Garder les suppléments fixes (créatine, collagène).
 - Algorithme : recherche locale / recuit simulé / génétique — partir du plan actuel et l'améliorer par petites modifications.
 - Résultat : **proposer** le plan (ne pas écraser automatiquement) — l'utilisateur valide. Stocker la proposition + son score + le détail des gains vs plan actuel.
-- Respecter les contraintes : structure 4 repas/jour, plafonds nutritionnels, cible calorique.
+- Respecter les contraintes : structure 4 repas/jour, cible calorique.
 - Coût : éviter de marteler l'API USDA (réutiliser le cache d'aliments).
 
 ## 7. (Plus tard) Détails mineurs
