@@ -67,6 +67,7 @@ Cible de calories **par repas**, dérivée du total journalier `calorieTarget()`
 **Idée** : un cron quotidien qui cherche un *meilleur* plan de repas pour la semaine type et le propose. Optimisation multi-critères, chaque plan candidat reçoit un score combinant :
 
 - **Équilibre** : à quel point le bilan couvre les besoins (proche de 100% sur tous les nutriments). C'est le critère principal.
+- **Calories par jour** : le total calorique de chaque jour doit être le plus proche possible de la cible journalière (`calorieTarget`). Idéalement aussi proche des cibles par repas (cf. #5 : 30/35/10/25).
 - **Simplicité** : moins il y a d'aliments différents par repas, mieux c'est (repas faciles à préparer). Pénaliser les repas avec trop d'ingrédients.
 - **Complexité / régularité** : pénaliser une trop grande variation d'un jour à l'autre (l'objectif est une semaine type cohérente, simple à faire les courses et à cuisiner). Récompenser la répétition raisonnable entre jours.
 
