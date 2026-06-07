@@ -43,7 +43,7 @@ Limite : les snapshots sont dans le même Neon → protègent contre une suppres
 
 Amélioration possible plus tard : page UI simple pour télécharger/restaurer un backup sans manipuler les URLs.
 
-## 5. Répartition des calories par repas — SPEC VALIDÉE (phase 1 brainstorming OK)
+## 5. Répartition des calories par repas — FAIT ✅
 
 Cible de calories **par repas**, dérivée du total journalier `calorieTarget()`.
 
