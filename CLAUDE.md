@@ -2,6 +2,10 @@
 
 # NutriWeek — Documentation complète pour agent IA
 
+> **Optimisation du plan** : quand l'utilisateur demande d'améliorer/optimiser sa semaine de repas,
+> lire et appliquer **[PLAN_OPTIMIZATION.md](PLAN_OPTIMIZATION.md)** (rubrique de notation : équilibre,
+> calories/jour, simplicité, régularité + contraintes). À suivre systématiquement.
+
 ## Contexte du projet
 
 Application web personnelle (un seul utilisateur : Nicolas) de **planification nutritionnelle hebdomadaire**.

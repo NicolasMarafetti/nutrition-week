@@ -62,8 +62,17 @@ Cible de calories **par repas**, dérivée du total journalier `calorieTarget()`
 
 **Reste à coder (phase 2)** : helper `mealCalorieTargets(profile)` dans `lib/nutrients.ts`, calcul des calories réelles par créneau sur la grille, indicateurs couleur, affichage dans le dialog.
 
-## 6. CRON journalier : optimiseur de plan via agent Claude — SPEC VALIDÉE (brainstorming OK)
+## 6. Optimiseur de plan — DÉCISION : approche MANUELLE (l'automatisation est mise de côté)
 
+**Décision finale** : l'optimiseur automatique complet (ci-dessous) a été jugé **trop lourd** à
+construire (cron + agent + scoring + auto-apply + historique + clé API + budget). On garde le
+**raisonnement de Claude, mais en manuel** : l'utilisateur demande une optimisation dans une session
+Claude Code, et Claude applique la rubrique formalisée dans **[PLAN_OPTIMIZATION.md](PLAN_OPTIMIZATION.md)**
+(mêmes critères de notation : équilibre / calories-jour / simplicité / régularité + contraintes).
+
+La spec automatisée ci-dessous est **conservée pour référence** si on veut un jour la construire.
+
+### (Référence, non retenu) Concept automatisé
 **Concept** : un cron quotidien où **Claude (agent IA) raisonne comme un nutritionniste** pour améliorer le plan hebdomadaire. Pas d'algorithme numérique aveugle — Claude identifie une carence, réfléchit à quel aliment la comblerait, le cherche dans l'USDA, le teste.
 
 ### Architecture (validée)
