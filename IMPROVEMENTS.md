@@ -78,7 +78,17 @@ Cible de calories **par repas**, dérivée du total journalier `calorieTarget()`
 - Respecter les contraintes : structure 4 repas/jour, cible calorique.
 - Coût : éviter de marteler l'API USDA (réutiliser le cache d'aliments).
 
-## 7. (Plus tard) Détails mineurs
+## 7. Optimisation UX/UI mobile
+
+**Idée** : l'app est pensée desktop (grille 7×4 large, dialogs centrés). L'optimiser pour le téléphone de l'utilisateur — c'est là qu'il consulte « ce qu'il doit manger ».
+
+**À faire** :
+- ⚠️ **Demander la résolution exacte du téléphone de l'utilisateur** avant de commencer.
+- Repenser la grille « Ma Semaine » en mobile (la table 7 colonnes scrolle horizontalement aujourd'hui — pas idéal). Pistes : vue par jour (sélecteur de jour), accordéon, cartes empilées.
+- Dialogs et formulaires adaptés au tactile (cibles de tap, plein écran sur mobile).
+- Navigation et tailles de police adaptées.
+
+## 8. (Plus tard) Détails mineurs
 
 - Qualité de traduction MyMemory parfois mauvaise (ex : noms USDA avec mentions de programme USDA).
 - Plusieurs RDA micronutriments sont des valeurs fixes, non ajustées à l'âge/sexe (la signature `rdaFn` le permet pourtant).
