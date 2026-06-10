@@ -28,9 +28,18 @@ Quand l'utilisateur demande d'**améliorer / optimiser sa semaine**, suivre cett
 3. **Simplicité** : minimiser le nombre d'aliments distincts par repas (repas faciles à préparer).
 4. **Régularité** : garder les jours cohérents entre eux (éviter une grande variation jour par jour).
 
+## Règle d'analyse (IMPORTANTE)
+
+**Toujours vérifier les contributions réelles via l'API avant d'attribuer une source de nutriment.**
+Ne jamais affirmer « tel aliment apporte tel nutriment » de mémoire / connaissance générale.
+`GET /api/bilan` renvoie un champ `contributions` : un objet `{ [clé_nutriment]: [{ name, amount }] }`
+trié par apport décroissant (moyenne/jour). C'est la **seule source de vérité** pour dire d'où vient
+un nutriment. (Ex. réel constaté : ce sont les **pâtes** qui fournissent 66% du sélénium, pas l'œuf
+ni le poisson comme on pourrait le supposer.)
+
 ## Processus
 
-1. Lire le bilan : `GET /api/bilan` (déficits déjà triés du plus bas au plus haut).
+1. Lire le bilan : `GET /api/bilan` (déficits triés ; champ `contributions` pour les sources réelles).
 2. Pour chaque déficit, choisir un **aliment entier riche** dans ce nutriment (connaissance
    nutritionnelle), vérifier les valeurs réelles via l'USDA, puis l'ajouter ou ajuster les grammes.
 3. **Ordre de préférence des actions** : d'abord ajuster les **quantités** d'aliments déjà présents
