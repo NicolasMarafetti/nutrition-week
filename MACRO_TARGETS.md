@@ -1,8 +1,9 @@
 # Cibles de macronutriments — valeurs retenues et sources
 
 Ce document justifie chaque cible utilisée dans `lib/nutrients.ts` pour les macronutriments,
-avec les sources officielles. Les valeurs visent un **adulte en population générale**
-(recommandations standard), **sans multiplicateur d'activité** (retiré à la demande de l'utilisateur).
+avec les sources officielles. Les valeurs des macros (protéines, lipides, glucides, fibres)
+visent un **adulte en population générale** (recommandations standard ANSES/EFSA).
+L'énergie utilise le métabolisme de base **× facteur d'activité (actif, ×1,55)** + surplus prise de masse.
 
 > Priorité aux sources officielles : **ANSES** (agence française), **EFSA** (Europe).
 > Les forums ne sont pas utilisés (non fiables).
@@ -11,15 +12,15 @@ avec les sources officielles. Les valeurs visent un **adulte en population gén�
 
 ## Énergie (calories)
 
-- **Valeur retenue** : `métabolisme de base (Mifflin-St Jeor) + 400 kcal` (surplus prise de masse), **sans facteur d'activité**.
+- **Valeur retenue** : `métabolisme de base (Mifflin-St Jeor) × 1,55 (actif) + 400 kcal` (surplus prise de masse).
 - **Méthode BMR** : équation de Mifflin-St Jeor (référence clinique courante).
   - Homme : `10 × poids(kg) + 6,25 × taille(cm) − 5 × âge + 5`
   - Femme : `… − 161`
-- **Note importante** : retirer le multiplicateur d'activité (×1,55) signifie que la cible
-  ne couvre plus la dépense liée à l'activité physique. Pour une personne active, la cible
-  obtenue est donc **volontairement basse** (proche du repos + surplus). Choix assumé par l'utilisateur.
+- **Facteur d'activité** : ×1,55 correspond à un niveau « actif » (PAL — Physical Activity Level),
+  qui convertit le métabolisme de repos en dépense énergétique journalière totale (TDEE).
 - **Sources** :
   - Mifflin MD, St Jeor ST, et al. *A new predictive equation for resting energy expenditure in healthy individuals.* Am J Clin Nutr. 1990. https://pubmed.ncbi.nlm.nih.gov/2305711/
+  - FAO/WHO/UNU, *Human energy requirements* (2004) — niveaux d'activité physique (PAL). https://www.fao.org/3/y5686e/y5686e00.htm
 
 ## Protéines
 
@@ -62,7 +63,7 @@ avec les sources officielles. Les valeurs visent un **adulte en population gén�
 
 | Macro | Cible | Base | Source principale |
 |---|---|---|---|
-| Énergie | BMR + 400 kcal (sans ×activité) | Mifflin-St Jeor | Mifflin 1990 |
+| Énergie | BMR × 1,55 + 400 kcal | Mifflin-St Jeor + PAL actif | Mifflin 1990 / FAO 2004 |
 | Protéines | 0,83 g/kg | PRI population | EFSA 2012 / ANSES 2016 |
 | Lipides | 35 % AET | borne basse ANSES | ANSES 2016 / EFSA |
 | Glucides | 50 % AET | médiane 45-60 % | ANSES 2016 / EFSA 2010 |

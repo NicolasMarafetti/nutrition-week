@@ -13,8 +13,8 @@ export interface BodyProfile {
   sex: "MALE" | "FEMALE"
 }
 
-// Énergie : métabolisme de base SANS multiplicateur d'activité (×1.55 retiré
-// à la demande de l'utilisateur). Surplus "prise de masse" conservé.
+// Énergie : métabolisme de base × facteur d'activité (actif) + surplus prise de masse.
+export const ACTIVITY_FACTOR = 1.55
 export const MASS_GAIN_SURPLUS = 400
 
 /** Métabolisme de base — Mifflin-St Jeor. */
@@ -23,10 +23,14 @@ export function bmr(p: BodyProfile): number {
   return Math.round(p.sex === "MALE" ? base + 5 : base - 161)
 }
 
-/** Cible énergétique journalière = métabolisme de base + surplus prise de masse
- *  (aucun facteur d'activité). */
+/** Dépense énergétique journalière (TDEE), niveau actif. */
+export function tdee(p: BodyProfile): number {
+  return Math.round(bmr(p) * ACTIVITY_FACTOR)
+}
+
+/** Cible énergétique journalière = TDEE + surplus prise de masse. */
 export function calorieTarget(p: BodyProfile): number {
-  return bmr(p) + MASS_GAIN_SURPLUS
+  return tdee(p) + MASS_GAIN_SURPLUS
 }
 
 export type MealKey = "BREAKFAST" | "LUNCH" | "SNACK" | "DINNER"
