@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { waterRecommendationMl, tdee, calorieTarget } from "@/lib/nutrients"
+import { waterRecommendationMl, bmr, calorieTarget } from "@/lib/nutrients"
 
 interface ProfileData {
   age: number
@@ -65,8 +65,8 @@ export default function ProfilPage() {
 
   if (loading) return <p className="text-zinc-500">Chargement…</p>
 
-  const tdeeValue = tdee(form)
-  const protein = Math.round(form.weightKg * 2.2)
+  const bmrValue = bmr(form)
+  const protein = Math.round(form.weightKg * 0.83)
   const calories = calorieTarget(form)
   const water = waterRecommendationMl(form.weightKg)
 
@@ -98,17 +98,13 @@ export default function ProfilPage() {
 
       <div className="border border-zinc-800 rounded-xl p-5 space-y-3">
         <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">
-          Objectifs calculés (prise de masse)
+          Objectifs calculés
         </h2>
         <div className="grid grid-cols-2 gap-3 text-sm">
-          <Stat label="Calories / jour" value={`${calories} kcal`} note={`TDEE ${tdeeValue} + 400`} />
-          <Stat label="Protéines / jour" value={`${protein} g`} note="2.2g × poids" />
+          <Stat label="Calories / jour" value={`${calories} kcal`} note={`Métab. base ${bmrValue} + 400`} />
+          <Stat label="Protéines / jour" value={`${protein} g`} note="0,83g × poids (EFSA)" />
           <Stat label="Eau / jour" value={`${water} ml`} note="35ml × poids" />
-          <Stat
-            label="Niveau d'activité"
-            value="Actif"
-            note="×1.55"
-          />
+          <Stat label="Fibres / jour" value="30 g" note="ANSES" />
         </div>
       </div>
     </div>

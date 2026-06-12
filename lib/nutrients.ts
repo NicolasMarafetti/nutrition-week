@@ -13,24 +13,20 @@ export interface BodyProfile {
   sex: "MALE" | "FEMALE"
 }
 
-// Hypothèses du profil : niveau d'activité "actif" + surplus prise de masse.
-export const ACTIVITY_FACTOR = 1.55
+// Énergie : métabolisme de base SANS multiplicateur d'activité (×1.55 retiré
+// à la demande de l'utilisateur). Surplus "prise de masse" conservé.
 export const MASS_GAIN_SURPLUS = 400
 
 /** Métabolisme de base — Mifflin-St Jeor. */
 export function bmr(p: BodyProfile): number {
   const base = 10 * p.weightKg + 6.25 * p.heightCm - 5 * p.age
-  return p.sex === "MALE" ? base + 5 : base - 161
+  return Math.round(p.sex === "MALE" ? base + 5 : base - 161)
 }
 
-/** Dépense énergétique journalière (TDEE), niveau actif. */
-export function tdee(p: BodyProfile): number {
-  return Math.round(bmr(p) * ACTIVITY_FACTOR)
-}
-
-/** Cible calorique journalière = TDEE + surplus prise de masse. */
+/** Cible énergétique journalière = métabolisme de base + surplus prise de masse
+ *  (aucun facteur d'activité). */
 export function calorieTarget(p: BodyProfile): number {
-  return tdee(p) + MASS_GAIN_SURPLUS
+  return bmr(p) + MASS_GAIN_SURPLUS
 }
 
 export type MealKey = "BREAKFAST" | "LUNCH" | "SNACK" | "DINNER"
@@ -99,7 +95,8 @@ export const NUTRIENTS: NutrientDef[] = [
     unit: "g",
     group: "macros",
     usdaIds: [1003],
-    rdaFn: ({ weightKg }) => Math.round(weightKg * 2.2),
+    // EFSA PRI 0,83 g/kg/jour (≈ ANSES 0,8 g/kg). Voir MACRO_TARGETS.md
+    rdaFn: ({ weightKg }) => Math.round(weightKg * 0.83),
     priority: 2,
   },
   {
@@ -108,8 +105,8 @@ export const NUTRIENTS: NutrientDef[] = [
     unit: "g",
     group: "macros",
     usdaIds: [1005],
-    // ~45% des calories, à 4 kcal/g
-    rdaFn: (p) => Math.round((calorieTarget(p) * 0.45) / 4),
+    // 50% de l'AET (ANSES & EFSA : 45-60%), à 4 kcal/g. Voir MACRO_TARGETS.md
+    rdaFn: (p) => Math.round((calorieTarget(p) * 0.5) / 4),
     priority: 3,
   },
   {
@@ -118,7 +115,8 @@ export const NUTRIENTS: NutrientDef[] = [
     unit: "g",
     group: "macros",
     usdaIds: [1004],
-    rdaFn: ({ weightKg }) => Math.round(weightKg * 1.0),
+    // 35% de l'AET (ANSES : 35-40%), à 9 kcal/g. Voir MACRO_TARGETS.md
+    rdaFn: (p) => Math.round((calorieTarget(p) * 0.35) / 9),
     priority: 4,
   },
   {
@@ -127,7 +125,8 @@ export const NUTRIENTS: NutrientDef[] = [
     unit: "g",
     group: "macros",
     usdaIds: [1079],
-    rdaFn: () => 38,
+    // ANSES : apport satisfaisant 30 g/jour (EFSA : 25 g). Voir MACRO_TARGETS.md
+    rdaFn: () => 30,
     priority: 5,
   },
 
