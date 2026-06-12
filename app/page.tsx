@@ -5,6 +5,7 @@ import MealDialog from "@/components/meal-dialog"
 import CopyDayDialog from "@/components/copy-day-dialog"
 import { displayName } from "@/lib/food-name"
 import { mealCalorieTargets, mealStatus, type BodyProfile, type MealKey } from "@/lib/nutrients"
+import { readCache, writeCache, hasChanged, CACHE_KEYS } from "@/lib/cache"
 import type { MealEntry, DayOfWeek, MealType } from "@/types"
 
 const DAYS: { key: DayOfWeek; label: string; full: string }[] = [
@@ -34,15 +35,37 @@ export default function WeekPage() {
   const [copyFrom, setCopyFrom] = useState<DayOfWeek | null>(null)
   const [mobileDay, setMobileDay] = useState<DayOfWeek>(DAYS[TODAY_INDEX].key)
 
+  // Revalidation des repas : ne met à jour l'écran + le cache que si différent.
   const load = useCallback(async () => {
     const res = await fetch("/api/meals")
-    setEntries(await res.json())
+    const data: MealEntry[] = await res.json()
+    setEntries((prev) => {
+      if (!hasChanged(prev, data)) return prev
+      writeCache(CACHE_KEYS.meals, data)
+      return data
+    })
   }, [])
 
-  useEffect(() => { load() }, [load])
   useEffect(() => {
-    fetch("/api/profile").then((r) => r.json()).then((p) => p && setProfile(p))
-  }, [])
+    // 1. Affichage immédiat depuis le cache (stale)
+    const cachedMeals = readCache<MealEntry[]>(CACHE_KEYS.meals)
+    if (cachedMeals) setEntries(cachedMeals)
+    const cachedProfile = readCache<BodyProfile>(CACHE_KEYS.profile)
+    if (cachedProfile) setProfile(cachedProfile)
+
+    // 2. Revalidation en arrière-plan (revalidate)
+    load()
+    fetch("/api/profile")
+      .then((r) => r.json())
+      .then((p: BodyProfile | null) => {
+        if (!p) return
+        setProfile((prev) => {
+          if (prev && !hasChanged(prev, p)) return prev
+          writeCache(CACHE_KEYS.profile, p)
+          return p
+        })
+      })
+  }, [load])
 
   const mealTargets = profile ? mealCalorieTargets(profile) : null
 
