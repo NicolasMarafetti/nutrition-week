@@ -197,7 +197,9 @@ export const NUTRIENTS: NutrientDef[] = [
     unit: "g",
     group: "collagen",
     usdaIds: [1225],
-    rdaFn: () => 10,
+    // Repère de recherche (pas de DRV officielle) : ~8 g/j = synthèse endogène
+    // estimée. Voir MACRO_TARGETS.md.
+    rdaFn: () => 8,
     priority: 12,
   },
   {

@@ -10,8 +10,9 @@ Quand l'utilisateur demande d'**améliorer / optimiser sa semaine**, suivre cett
 ## Contraintes (à ne jamais violer)
 
 - Structure **4 repas/jour** : Petit-déjeuner / Déjeuner / En-cas / Dîner.
-- **Garder les suppléments** : créatine 3 g et collagène 30 g (seules sources de créatine et de
-  glycine — les retirer crée immédiatement un déficit).
+- **Garder les suppléments** : créatine 3 g et collagène 15 g (seules sources de créatine et de
+  glycine — les retirer crée immédiatement un déficit). Collagène : à prendre avec vitamine C,
+  ~30–60 min avant la marche. Dose justifiée dans MACRO_TARGETS.md.
 - N'utiliser que des aliments USDA **Foundation / SR Legacy** (données nutritionnelles complètes).
   Éviter les entrées Branded/incomplètes et la liste des aliments ignorés.
 - **Sodium** : cible 1500 mg, ne pas chercher à la dépasser. **Graisses saturées** : rester bas est sain.

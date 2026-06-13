@@ -57,6 +57,53 @@ L'énergie utilise le métabolisme de base **× facteur d'activité (actif, ×1,
   - ANSES (déc. 2016) — apport satisfaisant 30 g/j. https://www.anses.fr/fr/system/files/NUT2012SA0103Ra-2.pdf
   - EFSA (2010) — 25 g/j adéquats pour un transit normal. https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2010.1462
 
+## Collagène (supplément)
+
+- **Valeur retenue** : **15 g / jour** de peptides de collagène hydrolysés, **avec vitamine C**,
+  pris ~30–60 min **avant l'effort** (marche de compétition).
+- **Statut particulier** : le collagène **n'est pas un nutriment essentiel** (le corps le synthétise).
+  Il n'existe donc **aucune valeur de référence officielle ANSES/EFSA** — EFSA n'a fixé aucune DRV et a
+  même **rejeté en 2011** l'allégation santé « collagène hydrolysé / maintien des articulations ».
+  La cible retenue ici vient de la **littérature clinique**, pas d'une agence.
+- **Justification** : la fourchette efficace est 5–15 g/j ; la majorité des RCT utilisent 10 ou 15 g/j.
+  Pour les **tendons** (profil de l'utilisateur), le protocole le mieux étudié est ~15 g + vitamine C
+  avant l'exercice : la charge mécanique de l'effort déclenche la synthèse de collagène, que les peptides
+  amplifient. Bénéfices modestes (tendons, douleur articulaire) visibles après 8–12 semaines de prise
+  régulière. Au-delà de ~15 g, aucun bénéfice supplémentaire démontré.
+- **Note d'usage app** : ce n'est pas une cible RDA dans `lib/nutrients.ts` (l'app track glycine 10 g,
+  proline 5 g, vitamine C 90 mg). Le collagène est un **supplément à conserver dans le plan** — voir
+  `PLAN_OPTIMIZATION.md`. Il reste la principale source de glycine du plan.
+- **Sources** :
+  - Khatri M, et al. *The effects of collagen peptide supplementation on body composition, collagen
+    synthesis, and recovery from joint injury and exercise: a systematic review.* (2021).
+    https://pmc.ncbi.nlm.nih.gov/articles/PMC8521576/
+  - Shaw G, et al. *Vitamin C–enriched gelatin supplementation before intermittent activity augments
+    collagen synthesis.* Am J Clin Nutr. 2017. https://pubmed.ncbi.nlm.nih.gov/27852613/
+  - EFSA NDA Panel, *Scientific Opinion on collagen hydrolysate and maintenance of joints* — allégation
+    **non fondée** (2011). https://efsa.onlinelibrary.wiley.com/doi/abs/10.2903/j.efsa.2011.2291
+
+## Glycine (acide aminé)
+
+- **Valeur retenue** : **8 g / jour**.
+- **Statut particulier** : la glycine est un acide aminé **dispensable / conditionnellement essentiel**
+  (le corps la synthétise). Les agences (ANSES, EFSA, IOM) **ne fixent une valeur de référence que pour
+  les acides aminés indispensables** — il n'existe donc **aucune DRV officielle pour la glycine**.
+  La cible retenue ici est un **repère de recherche**, pas une recommandation d'agence.
+- **Justification** : on aligne la cible sur la **synthèse endogène estimée** (~8 g/j chez un adulte
+  de 70 kg), qui est déjà bien au-dessus de l'apport alimentaire moyen de la population (~3,2 g/j,
+  NHANES). Une hypothèse de recherche (Meléndez-Hevia, 2009) suggère un besoin métabolique pouvant
+  atteindre ~10 g/j, mais elle est **débattue et non consensuelle** ; on retient donc la borne
+  « synthèse endogène » (8 g), plus prudente, après avoir ramené le collagène à 15 g.
+- **Sources** :
+  - EFSA — Dietary Reference Values (valeurs fixées pour les AA indispensables uniquement).
+    https://www.efsa.europa.eu/en/topics/topic/dietary-reference-values
+  - VKM, *Risk assessment of "other substances" – glycine* (2016) — synthèse endogène ~8 g/j,
+    apport alimentaire moyen ~3,2 g/j.
+    https://vkm.no/download/18.645b840415d03a2fe8f25c8b/1502711280583/Risk%20assessment%20of%20%22other%20substances%22%20%E2%80%93%20glycine.pdf
+  - Meléndez-Hevia E, et al. *A weak link in metabolism: the metabolic capacity for glycine
+    biosynthesis does not satisfy the need for collagen synthesis.* J Biosci. 2009 (hypothèse débattue).
+    https://pubmed.ncbi.nlm.nih.gov/20009312/
+
 ---
 
 ## Récapitulatif
@@ -68,3 +115,5 @@ L'énergie utilise le métabolisme de base **× facteur d'activité (actif, ×1,
 | Lipides | 35 % AET | borne basse ANSES | ANSES 2016 / EFSA |
 | Glucides | 50 % AET | médiane 45-60 % | ANSES 2016 / EFSA 2010 |
 | Fibres | 30 g/j | apport satisfaisant | ANSES 2016 |
+| Collagène (supplément) | 15 g/j + vit. C, avant l'effort | littérature clinique (pas de DRV officielle) | Khatri 2021 / Shaw 2017 |
+| Glycine | 8 g/j | synthèse endogène (pas de DRV officielle) | VKM 2016 / Meléndez-Hevia 2009 |
