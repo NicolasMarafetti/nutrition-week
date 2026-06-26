@@ -6,6 +6,15 @@
 > lire et appliquer **[PLAN_OPTIMIZATION.md](PLAN_OPTIMIZATION.md)** (rubrique de notation : équilibre,
 > calories/jour, simplicité, régularité + contraintes). À suivre systématiquement.
 
+> **Réflexe fin de session** : à chaque fin de session (quand l'utilisateur dit que c'est terminé, ou
+> que le travail en cours est bouclé), consigner ce qui a été appris/décidé dans le dossier
+> **[knowledge/](knowledge/)**. Au début d'une session, le consulter aussi pour ne pas reposer de
+> questions déjà tranchées. Règles :
+> - Un fichier Markdown par thème (ex : `petit-dejeuner.md`, `bilan-contraintes.md`).
+> - Compléter/mettre à jour le fichier existant plutôt que d'en créer un doublon ; corriger ce qui est devenu faux.
+> - Y mettre les **décisions, raisonnements et contraintes** non déductibles du code (préférences, justifications nutritionnelles, arbitrages). Pas le détail du code ni l'historique git.
+> - Maintenir **[knowledge/README.md](knowledge/README.md)** comme index (une ligne par fichier).
+
 ## Contexte du projet
 
 Application web personnelle (un seul utilisateur : Nicolas) de **planification nutritionnelle hebdomadaire**.

@@ -104,6 +104,55 @@ L'énergie utilise le métabolisme de base **× facteur d'activité (actif, ×1,
     biosynthesis does not satisfy the need for collagen synthesis.* J Biosci. 2009 (hypothèse débattue).
     https://pubmed.ncbi.nlm.nih.gov/20009312/
 
+## Sodium (minéral)
+
+- **Valeur retenue (actuelle dans `lib/nutrients.ts`)** : **1500 mg / jour**, commentée « apport adéquat ».
+  Le sel ajouté à la cuisson **n'est pas tracké** (seul le sodium intrinsèque des aliments l'est).
+- **Statut** : ce n'est **ni une limite de toxicité, ni un plafond strict**. Toutes les références ci-dessous
+  sont des **cibles de prévention cardiovasculaire** (réduire la tension artérielle dans la population
+  générale), pas un seuil au-delà duquel on serait « en danger ». Les valeurs varient selon l'organisme.
+
+### Panorama des références officielles
+
+| Organisme | Valeur sodium / j | Nature de la valeur |
+|---|---|---|
+| **NASEM/IOM (US) 2019** | **1500 mg** (14–50 ans) | *Adequate Intake* (AI). C'est la valeur reprise par l'app et par l'American Heart Association comme « idéal ». La plus basse / la plus stricte. |
+| **NASEM (US) 2019** | **2300 mg** | *CDRR* (Chronic Disease Risk Reduction) : seuil **au-dessus duquel** il est recommandé de réduire pour baisser le risque chronique. |
+| **EFSA (Europe) 2019** | **2000 mg** | *Safe and adequate intake* pour l'adulte UE : niveau jugé sûr **et** suffisant pour l'équilibre sodique, avec confiance dans une baisse du risque cardiovasculaire. |
+| **OMS 2023** | **< 2000 mg** | Maximum recommandé (= < 5 g de sel/j). |
+| **ANSES** | besoin physiologique **~1500 mg** ; objectif de santé publique exprimé en **sel** (réduire vers ≤ ~5 g sel/j ; cibles PNNS historiques 6,5–8 g sel selon sexe). | Le travail ANSES vise surtout à **faire baisser** la surconsommation française (8,7 g sel/j hommes, 6,7 g femmes), pas à fixer un minimum. |
+
+- **Conversion sel ↔ sodium** : **1 g de sodium = 2,5 g de sel (NaCl)** ; **1 g de sel = 0,4 g de sodium**.
+  Donc 1500 mg sodium ≈ **3,8 g de sel**, et 2000 mg sodium ≈ **5 g de sel**.
+- **Lecture** : les références convergent vers une **fourchette de 1500 à 2300 mg/j**. 1500 (NASEM/AHA) est
+  le bas « idéal » ; 2000 (EFSA/OMS) le repère « sûr et adéquat » européen ; 2300 (NASEM CDRR) le seuil
+  au-delà duquel réduire. Aucune n'est un mur de toxicité.
+
+### Contexte spécifique : marche de compétition (endurance)
+
+- L'utilisateur est **marcheur de compétition (longues distances)** → pertes sudorales importantes.
+  Le sodium évacué par la sueur est de **500–2000 mg par litre**, pour un débit sudoral de **1–3 L/h** :
+  une sortie longue peut faire perdre **plusieurs centaines de mg à > 1 g** de sodium.
+- Le sodium soutient le **volume plasmatique, l'hydratation, la fonction neuromusculaire** et prévient
+  l'**hyponatrémie d'effort**. Pour ce profil, viser le **bas de la fourchette (1500) est inutilement
+  restrictif** ; **~2000 mg/j (EFSA/OMS) est plus adapté**, avec un apport supplémentaire les jours de
+  sortie longue (réhydratation sodée).
+- **Réserve** : en cas d'**hypertension** ou de **sensibilité au sel** diagnostiquée, viser le bas
+  (≤ 1500 mg) redevient préférable.
+
+### Recommandation pour ce projet
+
+- Passer la cible de **1500 → 2000 mg/j** (alignement EFSA/OMS, mieux adapté au profil d'endurance), **et**
+  traiter le sodium comme une **cible avec marge** plutôt qu'un plafond rigide. À 2000 mg, le plan actuel
+  (~1500 mg) garde de la marge ; la sauce tomate salée n'est plus du tout un « dépassement ».
+
+- **Sources** :
+  - EFSA NDA Panel, *Dietary reference values for sodium*, EFSA Journal 2019;17(9):5778 — apport sûr et adéquat **2,0 g/j**. https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2019.5778
+  - NASEM (US National Academies), *Dietary Reference Intakes for Sodium and Potassium* (2019) — AI **1500 mg**, CDRR **2300 mg**. https://nap.nationalacademies.org/resource/25353/030519DRISodiumPotassium.pdf
+  - OMS, *Sodium reduction* fact sheet (2023) — **< 2 g sodium/j** (< 5 g sel). https://www.who.int/news-room/fact-sheets/detail/sodium-reduction
+  - ANSES, *Salt / Sel* — surconsommation française, objectifs de réduction PNNS. https://www.anses.fr/en/content/salt
+  - Baker LB, et al. *Normative data for sweating rate, sweat sodium concentration and sweat sodium loss in athletes.* J Sports Sci. 2019 — pertes sudorales **500–2000 mg Na/L**. https://www.tandfonline.com/doi/full/10.1080/02640414.2019.1633159
+
 ---
 
 ## Récapitulatif
@@ -117,3 +166,4 @@ L'énergie utilise le métabolisme de base **× facteur d'activité (actif, ×1,
 | Fibres | 30 g/j | apport satisfaisant | ANSES 2016 |
 | Collagène (supplément) | 15 g/j + vit. C, avant l'effort | littérature clinique (pas de DRV officielle) | Khatri 2021 / Shaw 2017 |
 | Glycine | 8 g/j | synthèse endogène (pas de DRV officielle) | VKM 2016 / Meléndez-Hevia 2009 |
+| Sodium | 1500 mg/j (code) — **2000 recommandé** | cible cardiovasculaire, pas un plafond ; profil endurance | EFSA 2019 / NASEM 2019 / OMS 2023 |
