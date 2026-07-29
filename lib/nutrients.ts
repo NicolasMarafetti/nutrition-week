@@ -6,20 +6,50 @@ export type NutrientGroup =
   | "energy"
   | "general"
 
+import { weightAtBodyFat } from "./body"
+
 export interface BodyProfile {
   age: number
   weightKg: number
   heightCm: number
   sex: "MALE" | "FEMALE"
+  bodyFatPct?: number | null
+  targetBodyFatPct?: number | null
+  /**
+   * Poids projeté à l'objectif de masse grasse, déduit de l'historique des pesées
+   * (lib/projection.ts). Calculé côté serveur et renvoyé par GET /api/profile.
+   * Prioritaire sur le calcul « masse maigre constante », qui reste le repli.
+   */
+  projectedTargetWeightKg?: number | null
 }
 
 // Énergie : métabolisme de base × facteur d'activité (actif) + surplus prise de masse.
 export const ACTIVITY_FACTOR = 1.55
 export const MASS_GAIN_SURPLUS = 400
 
-/** Métabolisme de base — Mifflin-St Jeor. */
+/**
+ * Poids servant de base au calcul énergétique : le **poids visé**, déduit de
+ * l'objectif de masse grasse, et non le poids actuel.
+ *
+ * Manger l'énergie du corps qu'on veut construire, pas de celui qu'on a — c'est
+ * ce qui alimente la prise de masse.
+ *
+ * Ordre de préférence :
+ * 1. projection sur l'historique réel des pesées (la plus juste) ;
+ * 2. calcul « masse maigre constante » (repli, sous-estime le poids visé) ;
+ * 3. poids actuel, tant que la composition corporelle est inconnue.
+ */
+export function energyBasisWeightKg(p: BodyProfile): number {
+  if (p.projectedTargetWeightKg != null && p.projectedTargetWeightKg > 0) {
+    return p.projectedTargetWeightKg
+  }
+  if (p.bodyFatPct == null || p.targetBodyFatPct == null) return p.weightKg
+  return weightAtBodyFat({ weightKg: p.weightKg, bodyFatPct: p.bodyFatPct }, p.targetBodyFatPct)
+}
+
+/** Métabolisme de base — Mifflin-St Jeor, sur le poids visé. */
 export function bmr(p: BodyProfile): number {
-  const base = 10 * p.weightKg + 6.25 * p.heightCm - 5 * p.age
+  const base = 10 * energyBasisWeightKg(p) + 6.25 * p.heightCm - 5 * p.age
   return Math.round(p.sex === "MALE" ? base + 5 : base - 161)
 }
 
@@ -28,18 +58,20 @@ export function tdee(p: BodyProfile): number {
   return Math.round(bmr(p) * ACTIVITY_FACTOR)
 }
 
-/** Cible énergétique journalière = TDEE + surplus prise de masse. */
+/** Cible énergétique journalière = TDEE du poids visé + surplus prise de masse. */
 export function calorieTarget(p: BodyProfile): number {
   return tdee(p) + MASS_GAIN_SURPLUS
 }
 
-export type MealKey = "BREAKFAST" | "LUNCH" | "SNACK" | "DINNER"
+export type MealKey = "BREAKFAST" | "MORNING_SNACK" | "LUNCH" | "SNACK" | "DINNER"
 
 // Répartition des calories par repas (front-loading, dîner allégé).
+// La collation de 10h prend 10% : petit-déj et déjeuner ont été réduits d'autant.
 export const MEAL_DISTRIBUTION: Record<MealKey, number> = {
-  BREAKFAST: 0.3,
-  LUNCH: 0.35,
-  SNACK: 0.1,
+  BREAKFAST: 0.25,
+  MORNING_SNACK: 0.1,
+  LUNCH: 0.32,
+  SNACK: 0.08,
   DINNER: 0.25,
 }
 
@@ -51,6 +83,7 @@ export function mealCalorieTargets(p: BodyProfile): Record<MealKey, number> {
   const daily = calorieTarget(p)
   return {
     BREAKFAST: Math.round(daily * MEAL_DISTRIBUTION.BREAKFAST),
+    MORNING_SNACK: Math.round(daily * MEAL_DISTRIBUTION.MORNING_SNACK),
     LUNCH: Math.round(daily * MEAL_DISTRIBUTION.LUNCH),
     SNACK: Math.round(daily * MEAL_DISTRIBUTION.SNACK),
     DINNER: Math.round(daily * MEAL_DISTRIBUTION.DINNER),

@@ -25,6 +25,7 @@ interface Props {
 
 const MEAL_LABELS: Record<string, string> = {
   BREAKFAST: "Petit-déjeuner",
+  MORNING_SNACK: "Collation 10h",
   LUNCH: "Déjeuner",
   SNACK: "En-cas",
   DINNER: "Dîner",

@@ -8,13 +8,19 @@ datasource db {
 }
 
 model Profile {
-  id             Int      @id @default(1)
-  age            Int
-  weightKg       Float
-  targetWeightKg Float
-  heightCm       Int
-  sex            Sex
-  updatedAt      DateTime @updatedAt
+  id               Int      @id @default(1)
+  age              Int
+  weightKg         Float
+  heightCm         Int
+  sex              Sex
+  // Composition corporelle : mesure actuelle (renseignée à la main ou reprise de
+  // la dernière pesée importée) et objectif visé.
+  //
+  // Il n'y a volontairement PAS de poids cible : l'objectif est exprimé en % de
+  // masse grasse, et le poids correspondant s'en déduit (voir lib/body.ts).
+  bodyFatPct       Float?
+  targetBodyFatPct Float?
+  updatedAt        DateTime @updatedAt
 }
 
 model Food {
@@ -61,6 +67,31 @@ model Translation {
   createdAt DateTime @default(now())
 }
 
+/// Une pesée sur balance connectée (import FeelFit ou saisie manuelle).
+/// Tous les champs hors date/poids sont optionnels : selon la balance et la
+/// version de l'export, certaines colonnes sont absentes.
+model BodyMeasurement {
+  id             Int      @id @default(autoincrement())
+  measuredAt     DateTime @unique
+  weightKg       Float
+  bmi            Float?
+  bodyFatPct     Float?
+  musclePct      Float?
+  muscleMassKg   Float?
+  waterPct       Float?
+  proteinPct     Float?
+  boneMassKg     Float?
+  visceralFat    Float?
+  bmrKcal        Float?
+  subcutaneousFatPct Float?
+  skeletalMusclePct  Float?
+  metabolicAge   Float?
+  source         String   @default("feelfit")
+  createdAt      DateTime @default(now())
+
+  @@index([measuredAt])
+}
+
 model Backup {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
@@ -85,6 +116,7 @@ enum DayOfWeek {
 
 enum MealType {
   BREAKFAST
+  MORNING_SNACK
   LUNCH
   SNACK
   DINNER

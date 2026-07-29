@@ -9,6 +9,9 @@ non déductibles du code : préférences de Nicolas, justifications nutritionnel
 ## Index
 
 - [petit-dejeuner.md](petit-dejeuner.md) — Format du petit déjeuner (overnight oats + cacao) et justifications.
+- [collation-10h.md](collation-10h.md) — Le 5ᵉ repas (10h) : part calorique, rééquilibrage des autres repas, contenu retenu.
+- [lait-lactose.md](lait-lactose.md) — Plus de lait ordinaire (digestion) : lait sans lactose + yaourt soja, et le calcium à préserver.
+- [composition-corporelle.md](composition-corporelle.md) — Objectif 17,5% de masse grasse et import des mesures FeelFit.
 - [bilan-contraintes.md](bilan-contraintes.md) — Nutriments « load-bearing » à ne pas casser + plafonds (sodium, graisses saturées) à ne pas dépasser.
 - [gouts-preferences.md](gouts-preferences.md) — Goûts de Nicolas (pas de citron, pas d'épicé) et directions de sauce compatibles.
 - [repas-midi-soir.md](repas-midi-soir.md) — Composition midi/soir + sauces tomate ajoutées (ail-basilic / herbes de Provence) et justifications.

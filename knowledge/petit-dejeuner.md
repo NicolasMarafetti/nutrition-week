@@ -2,10 +2,15 @@
 
 ## Composition (identique les 7 jours)
 
-80g avoine · 250g lait entier (enrichi vit. D) · 120g banane · 15g chia · 100g œuf ·
+**60g avoine** · **250g lait entier sans lactose** · **100g banane** · 15g chia · 100g œuf ·
 15g collagène (peptides) · 3g créatine · **5g cacao non sucré** (ajouté le 2026-06-26 pour le goût) ·
 **Vitamine D3 1000 UI / 25 µg (1 comprimé/jour)** — ajoutée le 2026-06-26 après la réduction du saumon
 (qui était la source dominante de vit. D ; voir [poisson-saumon.md](poisson-saumon.md)).
+
+> **Mises à jour du 2026-07-29** — avoine 80 → 60 g et banane 120 → 100 g pour laisser la place
+> à la [collation de 10h](collation-10h.md) ; lait entier → **lait entier sans lactose**
+> (nutrition identique, voir [lait-lactose.md](lait-lactose.md)). Le petit-déj vise désormais
+> **25% de l'AET** (≈ 735 kcal) et non plus 30%.
 
 ## Format : overnight oats (PAS smoothie)
 

@@ -2,9 +2,12 @@ import { prisma } from "@/lib/prisma"
 import { computeTargets, sumMealEntryNutrients } from "@/lib/nutrition"
 import { displayName } from "@/lib/food-name"
 import type { NutrientsMap } from "@/lib/nutrients"
+import { loadProfileWithProjection } from "@/lib/profile-projection"
 
 export async function GET() {
-  const profile = await prisma.profile.findUnique({ where: { id: 1 } })
+  // Même source que /api/profile : la cible calorique du bilan doit être celle
+  // affichée sur la page Profil, projection comprise.
+  const profile = await loadProfileWithProjection()
   if (!profile) return Response.json({ error: "no_profile" }, { status: 400 })
 
   const entries = await prisma.mealEntry.findMany({
@@ -20,9 +23,11 @@ export async function GET() {
   const targets = computeTargets(weekTotal, {
     age: profile.age,
     weightKg: profile.weightKg,
-    targetWeightKg: profile.targetWeightKg,
     heightCm: profile.heightCm,
     sex: profile.sex as "MALE" | "FEMALE",
+    bodyFatPct: profile.bodyFatPct,
+    targetBodyFatPct: profile.targetBodyFatPct,
+    projectedTargetWeightKg: profile.projectedTargetWeightKg,
   })
 
   // Contributions par aliment et par nutriment (moyenne journalière = total semaine ÷ 7)

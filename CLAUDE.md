@@ -101,8 +101,9 @@ Pour Vercel : ajouter ces deux variables dans Settings > Environment Variables.
 ```
 nutrition-week/
 ├── app/
-│   ├── page.tsx              # Page "Ma Semaine" — grille 7j × 4 repas
+│   ├── page.tsx              # Page "Ma Semaine" — grille 7j × 5 repas
 │   ├── bilan/page.tsx        # Page "Bilan" — analyse nutritionnelle par priorité
+│   ├── mesures/page.tsx      # Page "Mesures" — import FeelFit + courbes de composition corporelle
 │   ├── profil/page.tsx       # Page "Profil" — données perso + objectifs calculés
 │   ├── api/
 │   │   ├── profile/route.ts  # GET/PUT profil unique (id=1)
@@ -112,22 +113,30 @@ nutrition-week/
 │   │   ├── meals/
 │   │   │   ├── route.ts         # GET all entries, POST new entry
 │   │   │   └── [id]/route.ts    # PATCH grams, DELETE entry
+│   │   ├── measurements/
+│   │   │   ├── route.ts         # GET pesées, POST une pesée ou un import (upsert sur measuredAt)
+│   │   │   └── [id]/route.ts    # DELETE une pesée
 │   │   └── bilan/route.ts       # GET analyse complète semaine
 │   ├── globals.css
 │   └── layout.tsx            # Layout global + Nav
 ├── components/
-│   ├── nav.tsx               # Navigation (Ma Semaine / Bilan / Profil)
+│   ├── nav.tsx               # Navigation (Ma Semaine / Cuisiner / Bilan / Mesures / Profil)
 │   ├── meal-dialog.tsx       # Dialog édition d'un repas (recherche USDA + liste aliments)
+│   ├── measurement-import.tsx # Import d'un export de balance + remappage des colonnes
+│   ├── trend-chart.tsx       # Courbe SVG d'une mesure dans le temps (une métrique par graphique)
 │   └── ui/                   # Composants shadcn/ui
 ├── lib/
 │   ├── prisma.ts             # Singleton PrismaClient avec adapter Neon
 │   ├── nutrients.ts          # Définitions des 32 nutriments trackés + calcul RDA
 │   ├── nutrition.ts          # Calcul targets vs actual + tri par déficit
+│   ├── body.ts               # Masse grasse / masse maigre, projection vers l'objectif de % MG
+│   ├── feelfit.ts            # Lecture d'un export de balance (CSV/TSV) + détection des colonnes
+│   ├── apple-health.ts       # Lecture d'un export Apple Santé (export.xml) — voie réellement utilisée
 │   ├── usda.ts               # Appels USDA FoodData Central API
 │   └── generated/prisma/     # Client Prisma généré (ne pas modifier)
 ├── types/index.ts            # Types TypeScript partagés
 ├── prisma/
-│   ├── schema.prisma         # Schéma DB (Profile, Food, CustomFood, MealEntry)
+│   ├── schema.prisma         # Schéma DB (Profile, Food, CustomFood, MealEntry, BodyMeasurement)
 │   └── migrations/           # Migrations Prisma (créées après `prisma migrate dev`)
 ├── prisma.config.ts          # Config Prisma 7 (URL de connexion)
 └── .env.local                # Variables d'environnement locales (ignoré git)
@@ -139,7 +148,7 @@ nutrition-week/
 
 ### Profile (id fixe = 1, un seul utilisateur)
 ```
-age, weightKg, targetWeightKg, heightCm, sex (MALE/FEMALE)
+age, weightKg, heightCm, sex (MALE/FEMALE), bodyFatPct?, targetBodyFatPct?
 ```
 
 ### Food (cache USDA)
@@ -156,9 +165,23 @@ Pour les aliments non trouvés dans l'USDA (suppléments maison, aliments spéci
 
 ### MealEntry
 ```
-id, day (MON-SUN), meal (BREAKFAST/LUNCH/SNACK/DINNER), grams, foodId?, customFoodId?
+id, day (MON-SUN), meal (BREAKFAST/MORNING_SNACK/LUNCH/SNACK/DINNER), grams, foodId?, customFoodId?
 ```
 Contrainte unique : `(day, meal, foodId)` et `(day, meal, customFoodId)` — pas de doublon.
+
+`MORNING_SNACK` = la collation de 10h, ajoutée le 2026-07-29. Attention : la valeur a été ajoutée
+en fin d'enum PostgreSQL, donc `ORDER BY meal` ne suit pas l'ordre chronologique de la journée.
+L'ordre d'affichage vient de la constante `MEALS` (app/page.tsx), pas de la base.
+
+### BodyMeasurement
+```
+id, measuredAt (unique), weightKg, bmi?, bodyFatPct?, musclePct?, muscleMassKg?, waterPct?,
+proteinPct?, boneMassKg?, visceralFat?, bmrKcal?, subcutaneousFatPct?, skeletalMusclePct?,
+metabolicAge?, source
+```
+Une pesée de balance connectée. Tout est optionnel sauf la date et le poids : les colonnes
+présentes varient selon la balance et la version de l'export. `measuredAt` est unique, donc
+réimporter le même fichier met à jour au lieu de dupliquer.
 
 ---
 
@@ -176,12 +199,43 @@ Définis dans `lib/nutrients.ts` avec leurs IDs USDA et leurs RDA :
 | **Santé Générale** | Calcium, Potassium, Sodium, Sélénium, Vitamine A, Vitamine K, Oméga-6, Graisses saturées |
 
 ### Calcul des objectifs (profil actif, prise de masse)
-- **Calories** : Mifflin-St Jeor × 1.55 (actif) + 400 kcal (surplus prise de masse)
-- **Protéines** : 2.2g × poids (kg)
-- **Lipides** : 1g × poids (kg)
-- **Glucides** : ~45% des calories
+Source de vérité : `lib/nutrients.ts` et **[MACRO_TARGETS.md](MACRO_TARGETS.md)** pour les justifications.
+- **Calories** : Mifflin-St Jeor × 1.55 (actif) + 400 kcal (surplus prise de masse).
+  ⚠️ Mifflin est appliqué au **poids visé** (`energyBasisWeightKg`), pas au poids actuel —
+  décision 2026-07-29 : c'est l'objectif de masse grasse qui doit piloter les calories.
+  Les autres cibles (protéines, eau, graisses saturées) restent sur le **poids actuel**.
+  Le poids visé est **projeté depuis l'historique des pesées** ([lib/projection.ts](lib/projection.ts)) :
+  régression du poids sur le %MG → « kg par point de %MG » → extrapolation jusqu'à l'objectif.
+  Repli sur « masse maigre constante » si l'historique est insuffisant. Calculé côté serveur par
+  [lib/profile-projection.ts](lib/profile-projection.ts) et renvoyé par `GET /api/profile`, pour que
+  la page Profil et `/api/bilan` partent du même chiffre.
+- **Protéines** : 0,83 g × poids (kg) — PRI EFSA
+- **Lipides** : 35% de l'AET (ANSES)
+- **Glucides** : 50% de l'AET (ANSES/EFSA 45–60%)
 - **Eau** : 35ml × poids (kg)
 - **Micronutriments** : valeurs RDA/DRI officielles selon sexe/âge
+
+### Répartition des calories par repas
+`MEAL_DISTRIBUTION` dans `lib/nutrients.ts` : **25 / 10 / 32 / 8 / 25 %**
+(petit-déj / collation 10h / déjeuner / en-cas / dîner), tolérance ±15% par repas.
+
+### Composition corporelle
+Le profil porte `bodyFatPct` (mesure actuelle) et `targetBodyFatPct` (objectif, **17,5%** depuis
+le 2026-07-29). `lib/body.ts` en dérive masse grasse / masse maigre et le poids correspondant à
+l'objectif **à masse maigre constante**. La page Mesures importe l'historique et alimente ces valeurs.
+
+**Il n'y a pas de poids cible** (`targetWeightKg` supprimé le 2026-07-29) : l'objectif de corpulence
+est le % de masse grasse, et le poids s'en déduit.
+
+**`weightKg` et `bodyFatPct` ne se saisissent plus.** Ils sont recopiés depuis la dernière pesée par
+`syncProfileFromLatest()` ([lib/profile-sync.ts](lib/profile-sync.ts)), appelé après tout import ou
+suppression de mesure. `PUT /api/profile` les ignore volontairement (sauf à la création, où aucune
+pesée n'existe encore). Une seule source de vérité, donc plus de divergence entre les pages.
+
+**Masse grasse / masse maigre en kg ne sont plus affichées** (demande de Nicolas, 2026-07-29).
+`fatMassKg`/`leanMassKg` subsistent dans `lib/body.ts` car `weightAtBodyFat` en dépend, et le détail
+du calcul sur la page Profil montre l'étape intermédiaire — mais aucun écran ne les présente comme
+une métrique à suivre.
 
 ---
 

@@ -3,9 +3,11 @@ import { NUTRIENTS, type NutrientsMap } from "./nutrients"
 export interface Profile {
   age: number
   weightKg: number
-  targetWeightKg: number
   heightCm: number
   sex: "MALE" | "FEMALE"
+  bodyFatPct?: number | null
+  targetBodyFatPct?: number | null
+  projectedTargetWeightKg?: number | null
 }
 
 export interface NutrientTarget {
@@ -30,6 +32,9 @@ export function computeTargets(
       weightKg: profile.weightKg,
       heightCm: profile.heightCm,
       sex: profile.sex,
+      bodyFatPct: profile.bodyFatPct,
+      targetBodyFatPct: profile.targetBodyFatPct,
+      projectedTargetWeightKg: profile.projectedTargetWeightKg,
     })
     const actual = (weekNutrients[def.key] ?? 0) / 7
     const pct = target > 0 ? Math.min((actual / target) * 100, 999) : 0

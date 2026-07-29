@@ -1,5 +1,5 @@
 export type DayOfWeek = "MON" | "TUE" | "WED" | "THU" | "FRI" | "SAT" | "SUN"
-export type MealType = "BREAKFAST" | "LUNCH" | "SNACK" | "DINNER"
+export type MealType = "BREAKFAST" | "MORNING_SNACK" | "LUNCH" | "SNACK" | "DINNER"
 
 export interface MealEntry {
   id: number

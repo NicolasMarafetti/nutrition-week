@@ -2,7 +2,8 @@
 
 ## Composition (identique les 7 jours)
 
-**Midi** : pâtes (140 g) + poulet (65 g, tous les jours) + **protéine du jour en rotation** + carottes,
+**Midi** : pâtes (**105 g** depuis le 2026-07-29, contre 140 g — les calories libérées vont à la
+[collation de 10h](collation-10h.md)) + poulet (65 g, tous les jours) + **protéine du jour en rotation** + carottes,
 poivron rouge, huile d'olive + **Sauce tomate (ail, basilic) — 90 g**.
 - Rotation protéine du jour (depuis 2026-06-26, pour limiter le saumon) :
   **Lun & Jeu saumon 130 g · Mar & Ven cabillaud 150 g · Mer & Sam lentilles 150 g cuites · Dim œufs 100 g**.

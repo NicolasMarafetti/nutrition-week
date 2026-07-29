@@ -20,6 +20,7 @@ const DAYS: { key: DayOfWeek; label: string; full: string }[] = [
 
 const MEALS: { key: MealType; label: string }[] = [
   { key: "BREAKFAST", label: "Petit-déjeuner" },
+  { key: "MORNING_SNACK", label: "Collation 10h" },
   { key: "LUNCH", label: "Déjeuner" },
   { key: "SNACK", label: "En-cas" },
   { key: "DINNER", label: "Dîner" },

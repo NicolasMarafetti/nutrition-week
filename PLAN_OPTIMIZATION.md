@@ -9,7 +9,10 @@ Quand l'utilisateur demande d'**améliorer / optimiser sa semaine**, suivre cett
 
 ## Contraintes (à ne jamais violer)
 
-- Structure **4 repas/jour** : Petit-déjeuner / Déjeuner / En-cas / Dîner.
+- Structure **5 repas/jour** : Petit-déjeuner / **Collation 10h** / Déjeuner / En-cas / Dîner.
+  (La collation de 10h a été ajoutée le 2026-07-29 à la demande de Nicolas.)
+- **Aucun lait ni produit laitier** hors lait **sans lactose** : Nicolas digère mal le lactose
+  (décision 2026-07-29). Le yaourt au lait entier a été remplacé par du yaourt au soja enrichi.
 - **Garder les suppléments** : créatine 3 g et collagène 15 g (seules sources de créatine et de
   glycine — les retirer crée immédiatement un déficit). Collagène : à prendre avec vitamine C,
   ~30–60 min avant la marche. Dose justifiée dans MACRO_TARGETS.md.
@@ -24,8 +27,9 @@ Quand l'utilisateur demande d'**améliorer / optimiser sa semaine**, suivre cett
    Crédit par nutriment = `min(réel / cible, 1)` — pas de bonus à dépasser la cible.
    Traiter en priorité les déficits les plus sévères (les plus bas en %).
 2. **Calories par jour** : total quotidien le plus proche possible de `calorieTarget` (≈ 2940 kcal
-   pour le profil actuel). Et répartition par repas proche de **30 / 35 / 10 / 25 %**
-   (petit-déj / déj / en-cas / dîner), tolérance ±15 %.
+   pour le profil actuel). Et répartition par repas proche de **25 / 10 / 32 / 8 / 25 %**
+   (petit-déj / collation 10h / déj / en-cas / dîner), tolérance ±15 %.
+   Source de vérité : `MEAL_DISTRIBUTION` dans [lib/nutrients.ts](lib/nutrients.ts).
 3. **Simplicité** : minimiser le nombre d'aliments distincts par repas (repas faciles à préparer).
 4. **Régularité** : garder les jours cohérents entre eux (éviter une grande variation jour par jour).
 

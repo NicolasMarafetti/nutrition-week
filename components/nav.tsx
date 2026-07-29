@@ -8,6 +8,7 @@ const links = [
   { href: "/", label: "Ma Semaine" },
   { href: "/cuisiner", label: "Cuisiner" },
   { href: "/bilan", label: "Bilan" },
+  { href: "/mesures", label: "Mesures" },
   { href: "/profil", label: "Profil" },
 ]
 
