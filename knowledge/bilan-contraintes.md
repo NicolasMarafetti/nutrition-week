@@ -2,20 +2,24 @@
 
 Lors de toute modif de repas, **toujours relire `/api/bilan`** avant de changer une source.
 La plupart des nutriments sont en large surplus ; seuls quelques-uns sont serrés et conditionnent
-la composition. État au **2026-07-29** (après ajout de la collation de 10h et retrait des
-produits laitiers ordinaires) :
+la composition. État au **2026-08-09** (après le rééquilibrage vers les collations —
+voir [repartition-repas.md](repartition-repas.md)) :
 
 ## Serrés — à NE PAS casser (déficits : viser ≥ 90%)
 
 | Nutriment | % cible | Source critique |
 |---|---|---|
-| Lipides | ~91% | huile d'olive, **beurre de cacahuète (10h)**, chia, amandes |
-| Glycine (collagène) | ~95% | collagène (peptides) + œuf + **beurre de cacahuète** |
-| Glucides | ~96% | avoine, pâtes, pomme, banane |
-| Oméga-6 | ~100% | huile d'olive, beurre de cacahuète, amandes |
+| Glycine (collagène) | ~93% | collagène (peptides) + œuf + **beurre de cacahuète** |
+| Lipides | ~96% | huile d'olive, **beurre de cacahuète (10h)**, chia, amandes |
+| Glucides | ~96% | avoine, pâtes, pomme, **banane (×3/jour)** |
+| Sodium | ~96% | les **2 sauces tomate salées** (90 g × 2). Ne pas les réduire. |
 | Créatine | ~100% (pile) | créatine monohydrate 3g |
-| Calcium | ~101% | **lait sans lactose** (283 mg) + **yaourt soja enrichi** (198 mg) + amandes |
-| Vitamine D | ~185% | **supplément D3 1000 UI** + lait sans lactose + yaourt soja |
+| Oméga-6 | ~106% | huile d'olive, beurre de cacahuète, amandes |
+| Calcium | ~114% | **lait sans lactose** (283 mg) + **yaourt soja enrichi 250 g** + amandes |
+| Vitamine D | ~191% | **supplément D3 1000 UI** + lait sans lactose + yaourt soja |
+
+*Glycine est désormais la ligne la plus basse (93%) : elle a perdu 2 points en même temps que le
+poulet du midi/soir. À surveiller si on touche encore au collagène ou à l'œuf.*
 
 → Avant de retirer/remplacer **collagène, créatine, lait sans lactose, yaourt soja ou œuf**,
 vérifier l'impact sur ces lignes. Le lait et le yaourt portent ensemble ~480 mg de calcium :
@@ -26,8 +30,8 @@ Détail du raisonnement : [lait-lactose.md](lait-lactose.md).
 
 | Nutriment | % cible (1500) | Note |
 |---|---|---|
-| **Sodium** | ~102% (~1530 mg) | **Pas un plafond strict.** Les références forment une fourchette **1500–2300 mg/j** (NASEM AI 1500 / EFSA-OMS 2000 / NASEM CDRR 2300) — ce sont des **cibles cardiovasculaires**, pas un seuil de danger. Pour un **marcheur d'endurance** (pertes sudorales 500–2000 mg/L), **~2000 mg est plus adapté** que 1500. Donc être autour de 1500–2000 est très bien ; pas besoin de minimiser à tout prix. Réserve : viser bas si hypertension/sensibilité au sel. Détails et sources → [../MACRO_TARGETS.md](../MACRO_TARGETS.md). |
-| **Graisses saturées** | ~106% | **Toujours au-dessus du plafond (21 g)**, mais amélioré (118% → 106%). ⚠️ **C'est ce plafond qui empêche de combler la ligne « lipides » (91%)** : toute source de gras en apporte. Un ajustement calorique doit donc passer surtout par les **glucides** — c'est ce qui a été fait le 2026-07-29 (option « mixte à dominante glucides » : +95 kcal, glucides 92→96%, saturées 104→106% seulement). C'est la **vraie** ligne sensible : éviter crème, beurre, fromage. Levier restant si besoin : passer le lait sans lactose en **demi-écrémé** (−2 g env.), au prix d'un peu de calories et de vit. D. |
+| **Sodium** | ~96% (~1440 mg) | **Pas un plafond strict.** Les références forment une fourchette **1500–2300 mg/j** (NASEM AI 1500 / EFSA-OMS 2000 / NASEM CDRR 2300) — ce sont des **cibles cardiovasculaires**, pas un seuil de danger. Pour un **marcheur d'endurance** (pertes sudorales 500–2000 mg/L), **~2000 mg est plus adapté** que 1500. Donc être autour de 1500–2000 est très bien ; pas besoin de minimiser à tout prix. Réserve : viser bas si hypertension/sensibilité au sel. Détails et sources → [../MACRO_TARGETS.md](../MACRO_TARGETS.md). |
+| **Graisses saturées** | ~110% (23,2 g) | **Toujours au-dessus du plafond (21 g)**, mais amélioré (118% → 106%). ⚠️ **C'est ce plafond qui empêche de combler la ligne « lipides » (91%)** : toute source de gras en apporte. Un ajustement calorique doit donc passer surtout par les **glucides** — c'est ce qui a été fait le 2026-07-29 (option « mixte à dominante glucides » : +95 kcal, glucides 92→96%, saturées 104→106% seulement). C'est la **vraie** ligne sensible : éviter crème, beurre, fromage. Levier restant si besoin : passer le lait sans lactose en **demi-écrémé** (−2 g env.), au prix d'un peu de calories et de vit. D. |
 | Calories | ~102% | À la cible (surplus prise de masse inclus). Ne pas gonfler inutilement. |
 
 → Le seul « plafond » réellement contraignant ici est les **graisses saturées**. Le sodium est une cible

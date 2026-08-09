@@ -15,6 +15,10 @@ Nouvelle répartition (`MEAL_DISTRIBUTION`, lib/nutrients.ts) :
 | En-cas (après-midi) | 10% | **8%** |
 | Dîner | 25% | 25% |
 
+> ⚠️ **Périmé depuis le 2026-08-09** : la collation est passée à **15%** (et l'en-cas de 16h à 13%),
+> le déjeuner à 27% et le dîner à 20%, parce que Nicolas ne finissait pas ses deux gros repas.
+> État courant et raisonnement complet → [repartition-repas.md](repartition-repas.md).
+
 Le total journalier était déjà à la cible (~102%) : les 294 kcal de la collation ont donc été
 **pris sur les repas existants**, pas ajoutés. Coupes appliquées sur les 7 jours :
 - avoine **80 → 60 g** et banane **120 → 100 g** au petit-déj ;
@@ -25,7 +29,10 @@ Le total journalier était déjà à la cible (~102%) : les 294 kcal de la colla
 > l'historique) : avoine **60 → 68 g**, pomme **180 → 210 g**, pâtes du midi **105 → 115 g**,
 > huile d'olive du midi **+2 g** (19 g jours saumon / 34 g jours maigres).
 
-## Contenu retenu : pomme 210 g + beurre de cacahuète 30 g (~310 kcal)
+## Contenu retenu : pomme + beurre de cacahuète (+ banane depuis le 2026-08-09)
+
+Portions courantes : **pomme 280 g + beurre de cacahuète 38 g + banane 80 g (~470 kcal)**.
+Portions d'origine (2026-07-29) : pomme 210 g + beurre de cacahuète 30 g (~310 kcal).
 
 Pourquoi cette combinaison plutôt qu'une autre :
 - **Zéro préparation, transportable** — critère « simplicité » de PLAN_OPTIMIZATION.md.

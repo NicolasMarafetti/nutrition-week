@@ -66,13 +66,15 @@ export function calorieTarget(p: BodyProfile): number {
 export type MealKey = "BREAKFAST" | "MORNING_SNACK" | "LUNCH" | "SNACK" | "DINNER"
 
 // Répartition des calories par repas (front-loading, dîner allégé).
-// La collation de 10h prend 10% : petit-déj et déjeuner ont été réduits d'autant.
+// Rééquilibrée le 2026-08-09 : 5 points retirés au déjeuner et au dîner, que
+// Nicolas peinait à finir, reportés sur les deux collations qui passent bien.
+// Un plan qu'on termine bat un plan optimal laissé dans l'assiette.
 export const MEAL_DISTRIBUTION: Record<MealKey, number> = {
   BREAKFAST: 0.25,
-  MORNING_SNACK: 0.1,
-  LUNCH: 0.32,
-  SNACK: 0.08,
-  DINNER: 0.25,
+  MORNING_SNACK: 0.15,
+  LUNCH: 0.27,
+  SNACK: 0.13,
+  DINNER: 0.2,
 }
 
 // Tolérance autour de la cible d'un repas pour être considéré "dans la cible".

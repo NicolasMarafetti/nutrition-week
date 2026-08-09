@@ -27,7 +27,7 @@ Quand l'utilisateur demande d'**améliorer / optimiser sa semaine**, suivre cett
    Crédit par nutriment = `min(réel / cible, 1)` — pas de bonus à dépasser la cible.
    Traiter en priorité les déficits les plus sévères (les plus bas en %).
 2. **Calories par jour** : total quotidien le plus proche possible de `calorieTarget` (≈ 2940 kcal
-   pour le profil actuel). Et répartition par repas proche de **25 / 10 / 32 / 8 / 25 %**
+   pour le profil actuel). Et répartition par repas proche de **25 / 15 / 27 / 13 / 20 %**
    (petit-déj / collation 10h / déj / en-cas / dîner), tolérance ±15 %.
    Source de vérité : `MEAL_DISTRIBUTION` dans [lib/nutrients.ts](lib/nutrients.ts).
 3. **Simplicité** : minimiser le nombre d'aliments distincts par repas (repas faciles à préparer).

@@ -2,17 +2,22 @@
 
 ## Composition (identique les 7 jours)
 
-**Midi** : pâtes (**105 g** depuis le 2026-07-29, contre 140 g — les calories libérées vont à la
-[collation de 10h](collation-10h.md)) + poulet (65 g, tous les jours) + **protéine du jour en rotation** + carottes,
-poivron rouge, huile d'olive + **Sauce tomate (ail, basilic) — 90 g**.
+> **Portions réduites le 2026-08-09** — Nicolas ne finissait ni le midi ni le soir. Les coupes
+> portent sur les **féculents et les légumes**, jamais sur la protéine, l'huile d'olive ou la sauce.
+> Raisonnement et chiffres → [repartition-repas.md](repartition-repas.md).
+
+**Midi** (27% de l'AET) : pâtes **80 g** + poulet **50 g** (tous les jours) + **protéine du jour en
+rotation** + carottes **55 g**, poivron rouge **50 g**, huile d'olive + **Sauce tomate (ail, basilic) — 90 g**.
+*Historique des pâtes : 140 g → 105 g (2026-07-29) → 115 g → 80 g (2026-08-09).*
 - Rotation protéine du jour (depuis 2026-06-26, pour limiter le saumon) :
   **Lun & Jeu saumon 130 g · Mar & Ven cabillaud 150 g · Mer & Sam lentilles 150 g cuites · Dim œufs 100 g**.
   Voir [poisson-saumon.md](poisson-saumon.md).
 - Huile d'olive portée à **32 g** les jours maigres (cabillaud/lentilles) pour compenser le gras du
   poisson retiré (sinon les lipides tombent ~82 %). Reste à 17 g les jours saumon.
 
-**Soir** : poulet, pâtes, brocoli, épinards, huile d'olive
-+ **Sauce tomate (herbes de Provence) — 90 g** (ajoutée le 2026-06-26, pour le goût).
+**Soir** (20% de l'AET) : poulet **110 g**, pâtes **95 g**, brocoli **70 g**, épinards 60 g,
+huile d'olive 8 g + **Sauce tomate (herbes de Provence) — 90 g** (ajoutée le 2026-06-26, pour le goût).
+*Historique des pâtes du soir : 135 g → 95 g (2026-08-09).*
 
 ## Pourquoi ces sauces (décision 2026-06-26)
 

@@ -216,7 +216,7 @@ Source de vérité : `lib/nutrients.ts` et **[MACRO_TARGETS.md](MACRO_TARGETS.md
 - **Micronutriments** : valeurs RDA/DRI officielles selon sexe/âge
 
 ### Répartition des calories par repas
-`MEAL_DISTRIBUTION` dans `lib/nutrients.ts` : **25 / 10 / 32 / 8 / 25 %**
+`MEAL_DISTRIBUTION` dans `lib/nutrients.ts` : **25 / 15 / 27 / 13 / 20 %**
 (petit-déj / collation 10h / déjeuner / en-cas / dîner), tolérance ±15% par repas.
 
 ### Composition corporelle
